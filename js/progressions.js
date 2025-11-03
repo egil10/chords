@@ -206,4 +206,5 @@ function getRomanNumeral(degree, isMinor = false) {
 window.PROGRESSION_PATTERNS = PROGRESSION_PATTERNS;
 window.generateProgression = generateProgression;
 window.getRomanNumeral = getRomanNumeral;
+window.getChordFromDegree = getChordFromDegree;
 

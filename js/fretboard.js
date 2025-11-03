@@ -48,6 +48,10 @@ function createFretboardElement(containerId) {
         
         const fretSegments = document.createElement('div');
         fretSegments.className = 'fret-segments';
+        fretSegments.dataset.string = i;
+        
+        // Add click handler to the entire string line
+        fretSegments.addEventListener('click', handleStringLineClick);
         
         // Create fret segments (nut to 15th fret)
         for (let j = 0; j <= FRETS_TO_SHOW; j++) {
@@ -69,7 +73,6 @@ function createFretboardElement(containerId) {
             activeNoteLabel.textContent = note;
             segment.appendChild(activeNoteLabel);
             
-            segment.addEventListener('click', handleSegmentClick);
             fretSegments.appendChild(segment);
         }
         
@@ -245,25 +248,35 @@ function handleStringLabelClick(e) {
     }
 }
 
-// Handle clicking on fret segments
-function handleSegmentClick(e) {
-    // Get segment (might be clicked on note label, so check parent)
-    let segment = e.target;
-    if (e.target.classList.contains('fret-note-label')) {
-        segment = e.target.parentElement;
+// Handle clicking on string line (calculates which fret was clicked)
+function handleStringLineClick(e) {
+    const fretSegments = e.currentTarget;
+    const string = parseInt(fretSegments.dataset.string);
+    
+    // Don't handle clicks on note labels
+    if (e.target.classList.contains('fret-note-label') || e.target.classList.contains('fret-active-note-label')) {
+        return;
     }
     
-    const string = parseInt(segment.dataset.string);
-    const fret = parseInt(segment.dataset.fret);
+    // Get the bounding rect of the fret segments container
+    const rect = fretSegments.getBoundingClientRect();
+    const clickX = e.clientX - rect.left;
+    const width = rect.width;
+    
+    // Calculate which fret was clicked based on X position
+    // We have FRETS_TO_SHOW + 1 frets (0 to FRETS_TO_SHOW)
+    const fretWidth = width / (FRETS_TO_SHOW + 1);
+    const clickedFret = Math.floor(clickX / fretWidth);
+    const clampedFret = Math.max(0, Math.min(FRETS_TO_SHOW, clickedFret));
     
     // Shift+click on open position (fret 0) to mute string
-    if (e.shiftKey && fret === 0) {
+    if (e.shiftKey && clampedFret === 0) {
         window.currentFingering[string] = -1;
-    } else if (window.currentFingering[string] === fret) {
+    } else if (window.currentFingering[string] === clampedFret) {
         // Toggle: if already active, clear it
         window.currentFingering[string] = null;
     } else {
-        window.currentFingering[string] = fret;
+        window.currentFingering[string] = clampedFret;
     }
     
     updateFretboardDisplay();
@@ -508,7 +521,8 @@ function displayChordOnFretboard(chordName) {
     
     // Use the first position
     const position = chordData.positions[0];
-    window.currentFingering = position.frets;
+    // Create a copy of the frets array to avoid reference issues
+    window.currentFingering = [...position.frets];
     
     updateFretboardDisplay();
     updateChordInfo(chordName, chordData);
@@ -662,7 +676,8 @@ function displayAllVoicings(chordName) {
         `;
         
         voicingItem.addEventListener('click', () => {
-            window.currentFingering = voicing.frets;
+            // Create a copy to avoid reference issues
+            window.currentFingering = [...voicing.frets];
             updateFretboardDisplay();
             
             // Mark as active

@@ -68,18 +68,22 @@ function toggleProgressions() {
     }
 }
 
-window.toggleProgressions = toggleProgressions;
-window.updateProgressions = updateProgressions;
-
 // Update progressions display
 function updateProgressions() {
     const progressionsList = document.getElementById('progressionsList');
     if (!progressionsList) return;
     
+    // Check if PROGRESSION_PATTERNS is available
+    const patterns = window.PROGRESSION_PATTERNS || PROGRESSION_PATTERNS;
+    if (!patterns) {
+        console.error('PROGRESSION_PATTERNS not found');
+        return;
+    }
+    
     progressionsList.innerHTML = '';
     
     // Iterate through all progression categories
-    for (const [category, patterns] of Object.entries(PROGRESSION_PATTERNS)) {
+    for (const [category, patternsArray] of Object.entries(patterns)) {
         const categoryDiv = document.createElement('div');
         categoryDiv.className = 'progression-category';
         
@@ -90,7 +94,7 @@ function updateProgressions() {
         const patternsContainer = document.createElement('div');
         patternsContainer.className = 'patterns-grid';
         
-        patterns.forEach(pattern => {
+        patternsArray.forEach(pattern => {
             const patternDiv = createProgressionPattern(pattern, category);
             patternsContainer.appendChild(patternDiv);
         });
@@ -111,7 +115,12 @@ function createProgressionPattern(pattern, category) {
     patternDiv.className = 'progression-pattern';
     
     const isMinor = pattern.minor !== undefined ? pattern.minor : isProgressionMinor;
-    const chords = generateProgression(currentProgressionRoot, pattern.pattern, isMinor);
+    const genProgression = window.generateProgression || generateProgression;
+    if (!genProgression) {
+        console.error('generateProgression function not found');
+        return patternDiv;
+    }
+    const chords = genProgression(currentProgressionRoot, pattern.pattern, isMinor);
     
     const patternName = document.createElement('div');
     patternName.className = 'pattern-name';
@@ -170,6 +179,7 @@ function getCategoryTitle(category) {
 // Export functions
 window.initProgressions = initProgressions;
 window.updateProgressions = updateProgressions;
+window.toggleProgressions = toggleProgressions;
 window.currentProgressionRoot = currentProgressionRoot;
 window.isProgressionMinor = isProgressionMinor;
 

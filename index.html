@@ -124,6 +124,18 @@
 
             <!-- CHORD LIBRARY MODE -->
             <div class="controls" id="chordLibraryMode" style="display: none;">
+                <div class="filters">
+                    <div class="note-selector">
+                        <label class="filter-label">Root Note:</label>
+                        <div id="libraryNoteSelector" class="note-buttons">
+                            <!-- Dynamic note buttons -->
+                        </div>
+                        <button id="clearLibraryNotes" class="btn-clear-small" title="Clear selected notes">
+                            <i data-lucide="x"></i>
+                        </button>
+                    </div>
+                </div>
+
                 <div class="search-container">
                     <i data-lucide="search"></i>
                     <input type="text" id="chordSearch" placeholder="Search chords..." autocomplete="off" spellcheck="false">

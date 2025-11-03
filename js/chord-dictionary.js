@@ -718,11 +718,345 @@ const CHORD_DICTIONARY = {
     ]},
     'B13': { type: '13', intervals: [11, 3, 6, 9, 1, 4, 8], notes: ['B', 'D#', 'F#', 'A', 'C#', 'E', 'G#'], positions: [
         { frets: [-1, 2, 0, 4, 4, 0], root: 1 }
+    ]},
+
+    // Altered Dominants (Jazz/Fusion)
+    'C7b5': { type: '7b5', intervals: [0, 4, 6, 10], notes: ['C', 'E', 'Gb', 'Bb'], positions: [
+        { frets: [0, 3, 0, 2, 1, 0], root: 0 }
+    ]},
+    'C#7b5': { type: '7b5', intervals: [1, 5, 7, 11], notes: ['C#', 'F', 'G', 'B'], positions: [
+        { frets: [-1, 4, 0, 4, 6, 4], root: 1 }
+    ]},
+    'Db7b5': { type: '7b5', intervals: [1, 5, 7, 11], notes: ['Db', 'F', 'G', 'B'], positions: [
+        { frets: [-1, 4, 0, 4, 6, 4], root: 1 }
+    ]},
+    'D7b5': { type: '7b5', intervals: [2, 6, 8, 0], notes: ['D', 'F#', 'Ab', 'C'], positions: [
+        { frets: [-1, -1, 0, 1, 1, 2], root: 2 }
+    ]},
+    'D#7b5': { type: '7b5', intervals: [3, 7, 9, 1], notes: ['D#', 'G', 'A', 'C#'], positions: [
+        { frets: [-1, 6, 0, 6, 8, 6], root: 1 }
+    ]},
+    'Eb7b5': { type: '7b5', intervals: [3, 7, 9, 1], notes: ['Eb', 'G', 'A', 'Db'], positions: [
+        { frets: [-1, 6, 0, 6, 8, 6], root: 1 }
+    ]},
+    'E7b5': { type: '7b5', intervals: [4, 8, 10, 2], notes: ['E', 'G#', 'Bb', 'D'], positions: [
+        { frets: [0, 0, 0, 1, 0, 0], root: 0 }
+    ]},
+    'F7b5': { type: '7b5', intervals: [5, 9, 11, 3], notes: ['F', 'A', 'B', 'Eb'], positions: [
+        { frets: [1, 3, 0, 1, 0, 1], root: 0 }
+    ]},
+    'F#7b5': { type: '7b5', intervals: [6, 10, 0, 4], notes: ['F#', 'A#', 'C', 'E'], positions: [
+        { frets: [2, 4, 0, 2, 0, 2], root: 0 }
+    ]},
+    'Gb7b5': { type: '7b5', intervals: [6, 10, 0, 4], notes: ['Gb', 'Bb', 'C', 'E'], positions: [
+        { frets: [2, 4, 0, 2, 0, 2], root: 0 }
+    ]},
+    'G7b5': { type: '7b5', intervals: [7, 11, 1, 5], notes: ['G', 'B', 'Db', 'F'], positions: [
+        { frets: [3, 0, 0, 0, 3, 1], root: 0 }
+    ]},
+    'G#7b5': { type: '7b5', intervals: [8, 0, 2, 6], notes: ['G#', 'C', 'D', 'G'], positions: [
+        { frets: [4, 1, 0, 1, 4, 2], root: 0 }
+    ]},
+    'Ab7b5': { type: '7b5', intervals: [8, 0, 2, 6], notes: ['Ab', 'C', 'D', 'G'], positions: [
+        { frets: [4, 1, 0, 1, 4, 2], root: 0 }
+    ]},
+    'A7b5': { type: '7b5', intervals: [9, 1, 3, 7], notes: ['A', 'C#', 'Eb', 'G'], positions: [
+        { frets: [0, 0, 1, 0, 2, 0], root: 0 }
+    ]},
+    'A#7b5': { type: '7b5', intervals: [10, 2, 4, 8], notes: ['A#', 'D', 'E', 'G#'], positions: [
+        { frets: [1, 1, 2, 1, 3, 1], root: 0 }
+    ]},
+    'Bb7b5': { type: '7b5', intervals: [10, 2, 4, 8], notes: ['Bb', 'D', 'E', 'Ab'], positions: [
+        { frets: [1, 1, 2, 1, 3, 1], root: 0 }
+    ]},
+    'B7b5': { type: '7b5', intervals: [11, 3, 5, 9], notes: ['B', 'D#', 'F', 'A'], positions: [
+        { frets: [-1, 2, 3, 2, 4, 2], root: 1 }
+    ]},
+
+    'C7#5': { type: '7#5', intervals: [0, 4, 8, 10], notes: ['C', 'E', 'G#', 'Bb'], positions: [
+        { frets: [0, 3, 0, 2, 2, 0], root: 0 }
+    ]},
+    'C#7#5': { type: '7#5', intervals: [1, 5, 9, 11], notes: ['C#', 'F', 'A', 'B'], positions: [
+        { frets: [-1, 4, 0, 4, 7, 4], root: 1 }
+    ]},
+    'Db7#5': { type: '7#5', intervals: [1, 5, 9, 11], notes: ['Db', 'F', 'A', 'B'], positions: [
+        { frets: [-1, 4, 0, 4, 7, 4], root: 1 }
+    ]},
+    'D7#5': { type: '7#5', intervals: [2, 6, 10, 0], notes: ['D', 'F#', 'A#', 'C'], positions: [
+        { frets: [-1, -1, 0, 3, 3, 2], root: 2 }
+    ]},
+    'D#7#5': { type: '7#5', intervals: [3, 7, 11, 1], notes: ['D#', 'G', 'B', 'C#'], positions: [
+        { frets: [-1, 6, 0, 6, 8, 6], root: 1 }
+    ]},
+    'Eb7#5': { type: '7#5', intervals: [3, 7, 11, 1], notes: ['Eb', 'G', 'B', 'Db'], positions: [
+        { frets: [-1, 6, 0, 6, 8, 6], root: 1 }
+    ]},
+    'E7#5': { type: '7#5', intervals: [4, 8, 0, 2], notes: ['E', 'G#', 'C', 'D'], positions: [
+        { frets: [0, 0, 0, 2, 2, 0], root: 0 }
+    ]},
+    'F7#5': { type: '7#5', intervals: [5, 9, 1, 3], notes: ['F', 'A', 'C#', 'Eb'], positions: [
+        { frets: [1, 3, 0, 2, 2, 1], root: 0 }
+    ]},
+    'F#7#5': { type: '7#5', intervals: [6, 10, 2, 4], notes: ['F#', 'A#', 'D', 'E'], positions: [
+        { frets: [2, 4, 0, 3, 3, 2], root: 0 }
+    ]},
+    'Gb7#5': { type: '7#5', intervals: [6, 10, 2, 4], notes: ['Gb', 'Bb', 'D', 'E'], positions: [
+        { frets: [2, 4, 0, 3, 3, 2], root: 0 }
+    ]},
+    'G7#5': { type: '7#5', intervals: [7, 11, 3, 5], notes: ['G', 'B', 'D#', 'F'], positions: [
+        { frets: [3, 0, 0, 1, 3, 1], root: 0 }
+    ]},
+    'G#7#5': { type: '7#5', intervals: [8, 0, 4, 6], notes: ['G#', 'C', 'E', 'G'], positions: [
+        { frets: [4, 1, 0, 2, 4, 2], root: 0 }
+    ]},
+    'Ab7#5': { type: '7#5', intervals: [8, 0, 4, 6], notes: ['Ab', 'C', 'E', 'G'], positions: [
+        { frets: [4, 1, 0, 2, 4, 2], root: 0 }
+    ]},
+    'A7#5': { type: '7#5', intervals: [9, 1, 5, 7], notes: ['A', 'C#', 'E#', 'G'], positions: [
+        { frets: [0, 0, 2, 1, 2, 0], root: 0 }
+    ]},
+    'A#7#5': { type: '7#5', intervals: [10, 2, 6, 8], notes: ['A#', 'D', 'F#', 'G#'], positions: [
+        { frets: [1, 1, 3, 2, 3, 1], root: 0 }
+    ]},
+    'Bb7#5': { type: '7#5', intervals: [10, 2, 6, 8], notes: ['Bb', 'D', 'F#', 'Ab'], positions: [
+        { frets: [1, 1, 3, 2, 3, 1], root: 0 }
+    ]},
+    'B7#5': { type: '7#5', intervals: [11, 3, 7, 9], notes: ['B', 'D#', 'G', 'A'], positions: [
+        { frets: [-1, 2, 4, 3, 4, 2], root: 1 }
+    ]},
+
+    'C7b9': { type: '7b9', intervals: [0, 4, 7, 10, 1], notes: ['C', 'E', 'G', 'Bb', 'Db'], positions: [
+        { frets: [0, 3, 0, 2, 1, 0], root: 0 }
+    ]},
+    'C#7b9': { type: '7b9', intervals: [1, 5, 8, 11, 2], notes: ['C#', 'F', 'G#', 'B', 'D'], positions: [
+        { frets: [-1, 4, 6, 4, 6, 4], root: 1 }
+    ]},
+    'Db7b9': { type: '7b9', intervals: [1, 5, 8, 11, 2], notes: ['Db', 'F', 'Ab', 'B', 'D'], positions: [
+        { frets: [-1, 4, 6, 4, 6, 4], root: 1 }
+    ]},
+    'D7b9': { type: '7b9', intervals: [2, 6, 9, 0, 3], notes: ['D', 'F#', 'A', 'C', 'Eb'], positions: [
+        { frets: [-1, -1, 0, 2, 1, 2], root: 2 }
+    ]},
+    'D#7b9': { type: '7b9', intervals: [3, 7, 10, 1, 4], notes: ['D#', 'G', 'A#', 'C#', 'E'], positions: [
+        { frets: [-1, 6, 8, 6, 8, 6], root: 1 }
+    ]},
+    'Eb7b9': { type: '7b9', intervals: [3, 7, 10, 1, 4], notes: ['Eb', 'G', 'Bb', 'Db', 'E'], positions: [
+        { frets: [-1, 6, 8, 6, 8, 6], root: 1 }
+    ]},
+    'E7b9': { type: '7b9', intervals: [4, 8, 11, 2, 5], notes: ['E', 'G#', 'B', 'D', 'F'], positions: [
+        { frets: [0, 0, 1, 2, 2, 0], root: 0 }
+    ]},
+    'F7b9': { type: '7b9', intervals: [5, 9, 0, 3, 6], notes: ['F', 'A', 'C', 'Eb', 'Gb'], positions: [
+        { frets: [1, 3, 1, 2, 1, 1], root: 0 }
+    ]},
+    'F#7b9': { type: '7b9', intervals: [6, 10, 1, 4, 7], notes: ['F#', 'A#', 'C#', 'E', 'G'], positions: [
+        { frets: [2, 4, 2, 3, 2, 2], root: 0 }
+    ]},
+    'Gb7b9': { type: '7b9', intervals: [6, 10, 1, 4, 7], notes: ['Gb', 'Bb', 'Db', 'E', 'G'], positions: [
+        { frets: [2, 4, 2, 3, 2, 2], root: 0 }
+    ]},
+    'G7b9': { type: '7b9', intervals: [7, 11, 2, 5, 8], notes: ['G', 'B', 'D', 'F', 'Ab'], positions: [
+        { frets: [3, 0, 0, 0, 2, 1], root: 0 }
+    ]},
+    'G#7b9': { type: '7b9', intervals: [8, 0, 3, 6, 9], notes: ['G#', 'C', 'D#', 'G', 'A'], positions: [
+        { frets: [4, 1, 1, 1, 3, 2], root: 0 }
+    ]},
+    'Ab7b9': { type: '7b9', intervals: [8, 0, 3, 6, 9], notes: ['Ab', 'C', 'Eb', 'G', 'A'], positions: [
+        { frets: [4, 1, 1, 1, 3, 2], root: 0 }
+    ]},
+    'A7b9': { type: '7b9', intervals: [9, 1, 4, 7, 10], notes: ['A', 'C#', 'E', 'G', 'Bb'], positions: [
+        { frets: [0, 0, 2, 0, 2, 0], root: 0 }
+    ]},
+    'A#7b9': { type: '7b9', intervals: [10, 2, 5, 8, 11], notes: ['A#', 'D', 'F', 'G#', 'B'], positions: [
+        { frets: [1, 1, 3, 1, 3, 1], root: 0 }
+    ]},
+    'Bb7b9': { type: '7b9', intervals: [10, 2, 5, 8, 11], notes: ['Bb', 'D', 'F', 'Ab', 'B'], positions: [
+        { frets: [1, 1, 3, 1, 3, 1], root: 0 }
+    ]},
+    'B7b9': { type: '7b9', intervals: [11, 3, 6, 9, 0], notes: ['B', 'D#', 'F#', 'A', 'C'], positions: [
+        { frets: [-1, 2, 4, 2, 4, 2], root: 1 }
+    ]},
+
+    'C7#9': { type: '7#9', intervals: [0, 4, 7, 10, 3], notes: ['C', 'E', 'G', 'Bb', 'D#'], positions: [
+        { frets: [0, 3, 0, 2, 2, 0], root: 0 }
+    ]},
+    'C#7#9': { type: '7#9', intervals: [1, 5, 8, 11, 4], notes: ['C#', 'F', 'G#', 'B', 'E'], positions: [
+        { frets: [-1, 4, 6, 5, 6, 4], root: 1 }
+    ]},
+    'Db7#9': { type: '7#9', intervals: [1, 5, 8, 11, 4], notes: ['Db', 'F', 'Ab', 'B', 'E'], positions: [
+        { frets: [-1, 4, 6, 5, 6, 4], root: 1 }
+    ]},
+    'D7#9': { type: '7#9', intervals: [2, 6, 9, 0, 5], notes: ['D', 'F#', 'A', 'C', 'F'], positions: [
+        { frets: [-1, -1, 0, 3, 1, 2], root: 2 }
+    ]},
+    'D#7#9': { type: '7#9', intervals: [3, 7, 10, 1, 6], notes: ['D#', 'G', 'A#', 'C#', 'F#'], positions: [
+        { frets: [-1, 6, 8, 7, 8, 6], root: 1 }
+    ]},
+    'Eb7#9': { type: '7#9', intervals: [3, 7, 10, 1, 6], notes: ['Eb', 'G', 'Bb', 'Db', 'Gb'], positions: [
+        { frets: [-1, 6, 8, 7, 8, 6], root: 1 }
+    ]},
+    'E7#9': { type: '7#9', intervals: [4, 8, 11, 2, 7], notes: ['E', 'G#', 'B', 'D', 'G'], positions: [
+        { frets: [0, 0, 1, 3, 2, 0], root: 0 }
+    ]},
+    'F7#9': { type: '7#9', intervals: [5, 9, 0, 3, 8], notes: ['F', 'A', 'C', 'Eb', 'G#'], positions: [
+        { frets: [1, 3, 1, 3, 1, 1], root: 0 }
+    ]},
+    'F#7#9': { type: '7#9', intervals: [6, 10, 1, 4, 9], notes: ['F#', 'A#', 'C#', 'E', 'A'], positions: [
+        { frets: [2, 4, 2, 4, 2, 2], root: 0 }
+    ]},
+    'Gb7#9': { type: '7#9', intervals: [6, 10, 1, 4, 9], notes: ['Gb', 'Bb', 'Db', 'E', 'A'], positions: [
+        { frets: [2, 4, 2, 4, 2, 2], root: 0 }
+    ]},
+    'G7#9': { type: '7#9', intervals: [7, 11, 2, 5, 10], notes: ['G', 'B', 'D', 'F', 'Bb'], positions: [
+        { frets: [3, 0, 0, 0, 3, 1], root: 0 }
+    ]},
+    'G#7#9': { type: '7#9', intervals: [8, 0, 3, 6, 11], notes: ['G#', 'C', 'D#', 'G', 'B'], positions: [
+        { frets: [4, 1, 1, 1, 4, 2], root: 0 }
+    ]},
+    'Ab7#9': { type: '7#9', intervals: [8, 0, 3, 6, 11], notes: ['Ab', 'C', 'Eb', 'G', 'B'], positions: [
+        { frets: [4, 1, 1, 1, 4, 2], root: 0 }
+    ]},
+    'A7#9': { type: '7#9', intervals: [9, 1, 4, 7, 0], notes: ['A', 'C#', 'E', 'G', 'C'], positions: [
+        { frets: [0, 0, 2, 1, 2, 0], root: 0 }
+    ]},
+    'A#7#9': { type: '7#9', intervals: [10, 2, 5, 8, 1], notes: ['A#', 'D', 'F', 'G#', 'C#'], positions: [
+        { frets: [1, 1, 3, 2, 3, 1], root: 0 }
+    ]},
+    'Bb7#9': { type: '7#9', intervals: [10, 2, 5, 8, 1], notes: ['Bb', 'D', 'F', 'Ab', 'C#'], positions: [
+        { frets: [1, 1, 3, 2, 3, 1], root: 0 }
+    ]},
+    'B7#9': { type: '7#9', intervals: [11, 3, 6, 9, 2], notes: ['B', 'D#', 'F#', 'A', 'D'], positions: [
+        { frets: [-1, 2, 4, 3, 4, 2], root: 1 }
+    ]},
+
+    // Minor Major 7th (m(Maj7) or mMaj7)
+    'Cm(Maj7)': { type: 'mMaj7', intervals: [0, 3, 7, 11], notes: ['C', 'Eb', 'G', 'B'], positions: [
+        { frets: [-1, 3, 5, 4, 5, 3], root: 1 }
+    ]},
+    'C#m(Maj7)': { type: 'mMaj7', intervals: [1, 4, 8, 0], notes: ['C#', 'E', 'G#', 'C'], positions: [
+        { frets: [-1, 4, 6, 5, 6, 4], root: 1 }
+    ]},
+    'Dbm(Maj7)': { type: 'mMaj7', intervals: [1, 4, 8, 0], notes: ['Db', 'E', 'Ab', 'C'], positions: [
+        { frets: [-1, 4, 6, 5, 6, 4], root: 1 }
+    ]},
+    'Dm(Maj7)': { type: 'mMaj7', intervals: [2, 5, 9, 1], notes: ['D', 'F', 'A', 'C#'], positions: [
+        { frets: [-1, -1, 0, 2, 2, 1], root: 2 }
+    ]},
+    'D#m(Maj7)': { type: 'mMaj7', intervals: [3, 6, 10, 2], notes: ['D#', 'F#', 'A#', 'D'], positions: [
+        { frets: [-1, 6, 8, 7, 8, 6], root: 1 }
+    ]},
+    'Ebm(Maj7)': { type: 'mMaj7', intervals: [3, 6, 10, 2], notes: ['Eb', 'Gb', 'Bb', 'D'], positions: [
+        { frets: [-1, 6, 8, 7, 8, 6], root: 1 }
+    ]},
+    'Em(Maj7)': { type: 'mMaj7', intervals: [4, 7, 11, 3], notes: ['E', 'G', 'B', 'D#'], positions: [
+        { frets: [0, 0, 0, 1, 2, 0], root: 0 }
+    ]},
+    'Fm(Maj7)': { type: 'mMaj7', intervals: [5, 8, 0, 4], notes: ['F', 'Ab', 'C', 'E'], positions: [
+        { frets: [1, 3, 1, 1, 1, 1], root: 0 }
+    ]},
+    'F#m(Maj7)': { type: 'mMaj7', intervals: [6, 9, 1, 5], notes: ['F#', 'A', 'C#', 'F'], positions: [
+        { frets: [2, 4, 2, 2, 2, 2], root: 0 }
+    ]},
+    'Gbm(Maj7)': { type: 'mMaj7', intervals: [6, 9, 1, 5], notes: ['Gb', 'A', 'Db', 'F'], positions: [
+        { frets: [2, 4, 2, 2, 2, 2], root: 0 }
+    ]},
+    'Gm(Maj7)': { type: 'mMaj7', intervals: [7, 10, 2, 6], notes: ['G', 'Bb', 'D', 'F#'], positions: [
+        { frets: [3, 0, 0, 0, 2, 2], root: 0 }
+    ]},
+    'G#m(Maj7)': { type: 'mMaj7', intervals: [8, 11, 3, 7], notes: ['G#', 'B', 'D#', 'G'], positions: [
+        { frets: [4, 1, 1, 1, 3, 3], root: 0 }
+    ]},
+    'Abm(Maj7)': { type: 'mMaj7', intervals: [8, 11, 3, 7], notes: ['Ab', 'B', 'Eb', 'G'], positions: [
+        { frets: [4, 1, 1, 1, 3, 3], root: 0 }
+    ]},
+    'Am(Maj7)': { type: 'mMaj7', intervals: [9, 0, 4, 8], notes: ['A', 'C', 'E', 'G#'], positions: [
+        { frets: [0, 1, 2, 1, 2, 0], root: 0 }
+    ]},
+    'A#m(Maj7)': { type: 'mMaj7', intervals: [10, 1, 5, 9], notes: ['A#', 'C#', 'F', 'A'], positions: [
+        { frets: [1, 2, 3, 2, 3, 1], root: 0 }
+    ]},
+    'Bbm(Maj7)': { type: 'mMaj7', intervals: [10, 1, 5, 9], notes: ['Bb', 'Db', 'F', 'A'], positions: [
+        { frets: [1, 2, 3, 2, 3, 1], root: 0 }
+    ]},
+    'Bm(Maj7)': { type: 'mMaj7', intervals: [11, 2, 6, 10], notes: ['B', 'D', 'F#', 'A#'], positions: [
+        { frets: [-1, 2, 4, 3, 3, 2], root: 1 }
+    ]},
+
+    // Half-Diminished (m7b5)
+    'Cm7b5': { type: 'm7b5', intervals: [0, 3, 6, 10], notes: ['C', 'Eb', 'Gb', 'Bb'], positions: [
+        { frets: [-1, 3, 4, 3, 4, -1], root: 1 }
+    ]},
+    'C#m7b5': { type: 'm7b5', intervals: [1, 4, 7, 11], notes: ['C#', 'E', 'G', 'B'], positions: [
+        { frets: [-1, 4, 5, 4, 5, -1], root: 1 }
+    ]},
+    'Dbm7b5': { type: 'm7b5', intervals: [1, 4, 7, 11], notes: ['Db', 'E', 'G', 'B'], positions: [
+        { frets: [-1, 4, 5, 4, 5, -1], root: 1 }
+    ]},
+    'Dm7b5': { type: 'm7b5', intervals: [2, 5, 8, 0], notes: ['D', 'F', 'Ab', 'C'], positions: [
+        { frets: [-1, -1, 0, 1, 1, 1], root: 2 }
+    ]},
+    'D#m7b5': { type: 'm7b5', intervals: [3, 6, 9, 1], notes: ['D#', 'F#', 'A', 'C#'], positions: [
+        { frets: [-1, 6, 7, 6, 7, -1], root: 1 }
+    ]},
+    'Ebm7b5': { type: 'm7b5', intervals: [3, 6, 9, 1], notes: ['Eb', 'Gb', 'A', 'Db'], positions: [
+        { frets: [-1, 6, 7, 6, 7, -1], root: 1 }
+    ]},
+    'Em7b5': { type: 'm7b5', intervals: [4, 7, 10, 2], notes: ['E', 'G', 'Bb', 'D'], positions: [
+        { frets: [-1, 7, 8, 7, 8, -1], root: 1 }
+    ]},
+    'Fm7b5': { type: 'm7b5', intervals: [5, 8, 11, 3], notes: ['F', 'Ab', 'B', 'Eb'], positions: [
+        { frets: [-1, 8, 9, 8, 9, -1], root: 1 }
+    ]},
+    'F#m7b5': { type: 'm7b5', intervals: [6, 9, 0, 4], notes: ['F#', 'A', 'C', 'E'], positions: [
+        { frets: [-1, 9, 10, 9, 10, -1], root: 1 }
+    ]},
+    'Gbm7b5': { type: 'm7b5', intervals: [6, 9, 0, 4], notes: ['Gb', 'A', 'C', 'E'], positions: [
+        { frets: [-1, 9, 10, 9, 10, -1], root: 1 }
+    ]},
+    'Gm7b5': { type: 'm7b5', intervals: [7, 10, 1, 5], notes: ['G', 'Bb', 'Db', 'F'], positions: [
+        { frets: [-1, 10, 11, 10, 11, -1], root: 1 }
+    ]},
+    'G#m7b5': { type: 'm7b5', intervals: [8, 11, 2, 6], notes: ['G#', 'B', 'D', 'G'], positions: [
+        { frets: [-1, 11, 12, 11, 12, -1], root: 1 }
+    ]},
+    'Abm7b5': { type: 'm7b5', intervals: [8, 11, 2, 6], notes: ['Ab', 'B', 'D', 'G'], positions: [
+        { frets: [-1, 11, 12, 11, 12, -1], root: 1 }
+    ]},
+    'Am7b5': { type: 'm7b5', intervals: [9, 0, 3, 7], notes: ['A', 'C', 'Eb', 'G'], positions: [
+        { frets: [-1, 12, 13, 12, 13, -1], root: 1 },
+        { frets: [-1, 0, 1, 0, 1, -1], root: 1 }
+    ]},
+    'A#m7b5': { type: 'm7b5', intervals: [10, 1, 4, 8], notes: ['A#', 'C#', 'E', 'G#'], positions: [
+        { frets: [-1, 1, 2, 1, 2, -1], root: 1 }
+    ]},
+    'Bbm7b5': { type: 'm7b5', intervals: [10, 1, 4, 8], notes: ['Bb', 'Db', 'E', 'Ab'], positions: [
+        { frets: [-1, 1, 2, 1, 2, -1], root: 1 }
+    ]},
+    'Bm7b5': { type: 'm7b5', intervals: [11, 2, 5, 9], notes: ['B', 'D', 'F', 'A'], positions: [
+        { frets: [-1, 2, 3, 2, 3, -1], root: 1 }
     ]}
 };
 
 // Note names and interval utilities are now in utils.js
 // NOTE_NAMES, FLAT_NAMES, and intervalName() are imported from utils.js
+
+// Voicing Templates for common chord shapes (for generating multiple voicings)
+// These can be used to automatically generate named voicings for any chord
+const VOICING_TEMPLATE_NAMES = {
+    // Major chord patterns
+    'major_open_C': { frets: [-1, 3, 5, 5, 5, 3], name: 'C Shape (Open)', difficulty: 'beginner', category: 'open' },
+    'major_barre_E': { frets: [1, 3, 3, 2, 1, 1], name: 'Barre (E-shape)', difficulty: 'intermediate', category: 'barre' },
+    'major_barre_A': { frets: [-1, 3, 5, 5, 5, 3], name: 'Barre (A-shape)', difficulty: 'intermediate', category: 'barre' },
+    
+    // Minor chord patterns  
+    'minor_open_Am': { frets: [0, 1, 2, 2, 1, 0], name: 'Am Shape (Open)', difficulty: 'beginner', category: 'open' },
+    'minor_barre_Em': { frets: [1, 3, 3, 1, 1, 1], name: 'Barre (Em-shape)', difficulty: 'intermediate', category: 'barre' },
+    
+    // 7th chord patterns
+    'dom7_open': { frets: [0, 0, 2, 0, 2, 0], name: 'Open Dominant 7th', difficulty: 'beginner', category: 'open' },
+    'maj7_open': { frets: [-1, 3, 2, 0, 0, 0], name: 'Open Major 7th', difficulty: 'beginner', category: 'open' },
+    'min7_open': { frets: [0, 0, 0, 2, 2, 0], name: 'Open Minor 7th', difficulty: 'beginner', category: 'open' }
+};
 
 // Build a lookup index for finding all voicings of a chord by its notes
 // This indexes chords by their note sets for quick voicing lookup
@@ -752,6 +1086,35 @@ function findAllVoicingsByNotes(notes) {
     return VOICING_LOOKUP[noteKey] || [];
 }
 
+// Helper function to get voicing description based on fingering pattern
+function getVoicingName(frets, root, rootString) {
+    const activeFrets = frets.filter(f => f !== null && f !== -1);
+    const openStrings = frets.filter(f => f === 0).length;
+    const barreFrets = frets.filter(f => f > 0 && f !== null && f !== -1);
+    
+    if (barreFrets.length === 0) {
+        return 'Open Position';
+    }
+    
+    const lowestFret = Math.min(...barreFrets);
+    const highestFret = Math.max(...barreFrets);
+    const fretSpan = highestFret - lowestFret;
+    
+    // Determine shape type based on fret pattern
+    if (openStrings >= 3) {
+        return 'Open Position';
+    } else if (fretSpan > 3) {
+        return 'Extended Form';
+    } else if (frets[0] > 0 && frets.filter(f => f === frets[0]).length >= 3) {
+        return `Barre (${lowestFret}${lowestFret === 1 ? 'st' : 'th'} fret)`;
+    } else if (activeFrets.length <= 4 && openStrings > 0) {
+        return 'Triad Form';
+    } else {
+        return `Position ${lowestFret}+`;
+    }
+}
+
 // Export for use in other modules
 window.findAllVoicingsByNotes = findAllVoicingsByNotes;
+window.getVoicingName = getVoicingName;
 

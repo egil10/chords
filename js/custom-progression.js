@@ -670,26 +670,11 @@ function displayCustomProgression() {
             const voicingFretboard = document.createElement('div');
             voicingFretboard.className = 'progression-voicing-fretboard';
             
-            // Create mini fretboard
+            // Create mini fretboard for custom chord
             const miniFretboard = createMiniFretboard(selectedVoicing.frets);
             voicingFretboard.appendChild(miniFretboard);
             
             chordCard.appendChild(voicingFretboard);
-            
-            // Click to show full fretboard
-            chordCard.addEventListener('click', () => {
-                // Convert -1 to null for currentFingering
-                const frets = selectedVoicing.frets.map(f => f === -1 ? null : f);
-                window.currentFingering = frets;
-                if (typeof updateFretboardDisplay === 'function') {
-                    updateFretboardDisplay();
-                }
-                
-                // Update chord info
-                document.getElementById('currentChord').textContent = item.chordName;
-                document.getElementById('chordNotes').innerHTML = `<h4>Notes</h4><p>${item.customNotes ? item.customNotes.join(', ') : ''}</p>`;
-                document.getElementById('chordIntervals').innerHTML = '<h4>Intervals</h4><p>Custom Chord</p>';
-            });
         } else if (selectedVoicing && chordData) {
             // Display selected voicing for regular chords
             const voicingFretboard = document.createElement('div');
@@ -703,7 +688,8 @@ function displayCustomProgression() {
             
             // Click to show full fretboard
             chordCard.addEventListener('click', () => {
-                window.currentFingering = selectedVoicing.frets;
+                // Create a copy to avoid reference issues
+                window.currentFingering = [...selectedVoicing.frets];
                 if (typeof updateFretboardDisplay === 'function') {
                     updateFretboardDisplay();
                 }

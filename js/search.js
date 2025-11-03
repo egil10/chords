@@ -65,31 +65,55 @@ function initSearch() {
 // Initialize note selector
 function initNoteSelector() {
     const noteSelector = document.getElementById('noteSelector');
+    const libraryNoteSelector = document.getElementById('libraryNoteSelector');
     const clearNotesBtn = document.getElementById('clearNotes');
+    const clearLibraryNotesBtn = document.getElementById('clearLibraryNotes');
     
     // All 12 notes
     const notes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
     
-    // Create note buttons
-    notes.forEach(note => {
-        const button = document.createElement('button');
-        button.type = 'button';
-        button.className = 'note-button';
-        button.dataset.note = note;
-        button.textContent = note;
-        button.setAttribute('aria-label', `Toggle ${note} note`);
+    // Helper function to create note buttons for a selector
+    const createNoteButtons = (selector) => {
+        if (!selector) return;
         
-        button.addEventListener('click', () => {
-            toggleNote(note);
+        notes.forEach(note => {
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = 'note-button';
+            button.dataset.note = note;
+            button.textContent = note;
+            button.setAttribute('aria-label', `Toggle ${note} note`);
+            
+            button.addEventListener('click', () => {
+                toggleNote(note);
+            });
+            
+            selector.appendChild(button);
         });
-        
-        noteSelector.appendChild(button);
-    });
+    };
     
-    // Clear notes button
-    clearNotesBtn.addEventListener('click', () => {
-        clearSelectedNotes();
-    });
+    // Create note buttons for tones mode
+    if (noteSelector) {
+        createNoteButtons(noteSelector);
+    }
+    
+    // Create note buttons for library mode
+    if (libraryNoteSelector) {
+        createNoteButtons(libraryNoteSelector);
+    }
+    
+    // Clear notes buttons
+    if (clearNotesBtn) {
+        clearNotesBtn.addEventListener('click', () => {
+            clearSelectedNotes();
+        });
+    }
+    
+    if (clearLibraryNotesBtn) {
+        clearLibraryNotesBtn.addEventListener('click', () => {
+            clearSelectedNotes();
+        });
+    }
     
     // Initialize icons after note buttons are created
     if (typeof lucide !== 'undefined') {
@@ -138,12 +162,15 @@ function updateNoteButtons() {
         }
     });
     
-    // Show/hide clear button
+    // Show/hide clear buttons
     const clearBtn = document.getElementById('clearNotes');
+    const clearLibraryBtn = document.getElementById('clearLibraryNotes');
     if (selectedNotes.size > 0) {
-        clearBtn.style.display = 'flex';
+        if (clearBtn) clearBtn.style.display = 'flex';
+        if (clearLibraryBtn) clearLibraryBtn.style.display = 'flex';
     } else {
-        clearBtn.style.display = 'none';
+        if (clearBtn) clearBtn.style.display = 'none';
+        if (clearLibraryBtn) clearLibraryBtn.style.display = 'none';
     }
 }
 
@@ -172,35 +199,54 @@ function filterChords() {
         });
     }
     
-    // Apply note filter - chord must contain ALL selected notes
+    // Apply note filter
     if (selectedNotes.size > 0) {
-        filteredChords = filteredChords.filter(([name, data]) => {
-            const chordNotes = new Set(data.notes);
-            // Normalize chord notes for comparison (handle enharmonic equivalents)
-            const normalizedChordNotes = new Set();
-            chordNotes.forEach(note => {
-                normalizedChordNotes.add(note);
-                // Add enharmonic equivalents
-                if (note === 'C#') normalizedChordNotes.add('Db');
-                if (note === 'Db') normalizedChordNotes.add('C#');
-                if (note === 'D#') normalizedChordNotes.add('Eb');
-                if (note === 'Eb') normalizedChordNotes.add('D#');
-                if (note === 'F#') normalizedChordNotes.add('Gb');
-                if (note === 'Gb') normalizedChordNotes.add('F#');
-                if (note === 'G#') normalizedChordNotes.add('Ab');
-                if (note === 'Ab') normalizedChordNotes.add('G#');
-                if (note === 'A#') normalizedChordNotes.add('Bb');
-                if (note === 'Bb') normalizedChordNotes.add('A#');
+        // If exactly one note is selected, filter by root note (chord name starts with that note)
+        if (selectedNotes.size === 1) {
+            const selectedNote = Array.from(selectedNotes)[0];
+            filteredChords = filteredChords.filter(([name, data]) => {
+                // Extract root note from chord name (e.g., "C", "C#", "Cm", "Cmaj7" -> "C" or "C#")
+                const rootMatch = name.match(/^([A-G][#b]?)/);
+                if (!rootMatch) return false;
+                
+                const rootNote = rootMatch[1];
+                
+                // Normalize for comparison (handle enharmonic equivalents)
+                const normalizedSelected = window.normalizeNoteName ? window.normalizeNoteName(selectedNote) : selectedNote;
+                const normalizedRoot = window.normalizeNoteName ? window.normalizeNoteName(rootNote) : rootNote;
+                
+                return normalizedSelected === normalizedRoot;
             });
-            
-            // Check if all selected notes are in the chord (including enharmonic equivalents)
-            for (const selectedNote of selectedNotes) {
-                if (!normalizedChordNotes.has(selectedNote)) {
-                    return false;
+        } else {
+            // If multiple notes are selected, chord must contain ALL selected notes
+            filteredChords = filteredChords.filter(([name, data]) => {
+                const chordNotes = new Set(data.notes);
+                // Normalize chord notes for comparison (handle enharmonic equivalents)
+                const normalizedChordNotes = new Set();
+                chordNotes.forEach(note => {
+                    normalizedChordNotes.add(note);
+                    // Add enharmonic equivalents
+                    if (note === 'C#') normalizedChordNotes.add('Db');
+                    if (note === 'Db') normalizedChordNotes.add('C#');
+                    if (note === 'D#') normalizedChordNotes.add('Eb');
+                    if (note === 'Eb') normalizedChordNotes.add('D#');
+                    if (note === 'F#') normalizedChordNotes.add('Gb');
+                    if (note === 'Gb') normalizedChordNotes.add('F#');
+                    if (note === 'G#') normalizedChordNotes.add('Ab');
+                    if (note === 'Ab') normalizedChordNotes.add('G#');
+                    if (note === 'A#') normalizedChordNotes.add('Bb');
+                    if (note === 'Bb') normalizedChordNotes.add('A#');
+                });
+                
+                // Check if all selected notes are in the chord (including enharmonic equivalents)
+                for (const selectedNote of selectedNotes) {
+                    if (!normalizedChordNotes.has(selectedNote)) {
+                        return false;
+                    }
                 }
-            }
-            return true;
-        });
+                return true;
+            });
+        }
     }
     
     // Sort chords
@@ -353,6 +399,112 @@ function displayChordOnSelectedFretboard(frets) {
     });
 }
 
+// Create a mini visual fretboard element (scaled down version of main fretboard)
+function createMiniFretboardVisual(frets, rootStringIndex = null) {
+    const STRINGS = ['E', 'A', 'D', 'G', 'B', 'E'];
+    const container = document.createElement('div');
+    container.className = 'mini-fretboard-visual';
+    
+    // Calculate the fret range to display (show only relevant frets)
+    const activeFrets = frets.filter(f => f !== null && f !== -1 && f >= 0);
+    let minFret, maxFret;
+    if (activeFrets.length === 0) {
+        // All muted, show frets 0-4
+        minFret = 0;
+        maxFret = 4;
+    } else {
+        const minActiveFret = Math.min(...activeFrets);
+        const maxActiveFret = Math.max(...activeFrets);
+        minFret = Math.max(0, minActiveFret - 1);
+        maxFret = Math.min(15, maxActiveFret + 2);
+    }
+    
+    // Create fret numbers row
+    const fretNumbersRow = document.createElement('div');
+    fretNumbersRow.className = 'mini-fret-numbers-row';
+    
+    const fretNumbers = document.createElement('div');
+    fretNumbers.className = 'mini-fret-numbers';
+    
+    for (let j = minFret; j <= maxFret; j++) {
+        const fretNum = document.createElement('div');
+        fretNum.className = 'mini-fret-number';
+        fretNum.textContent = j;
+        fretNumbers.appendChild(fretNum);
+    }
+    
+    fretNumbersRow.appendChild(fretNumbers);
+    container.appendChild(fretNumbersRow);
+    
+    // Determine root string and fret
+    let rootString = rootStringIndex !== null ? rootStringIndex : -1;
+    let rootFret = -1;
+    
+    if (rootString >= 0 && rootString < frets.length && frets[rootString] !== null && frets[rootString] !== -1 && frets[rootString] >= 0) {
+        rootFret = frets[rootString];
+    } else {
+        // Fallback: find the first active fret
+        for (let i = 0; i < frets.length; i++) {
+            if (frets[i] !== null && frets[i] !== -1 && frets[i] >= 0) {
+                rootString = i;
+                rootFret = frets[i];
+                break;
+            }
+        }
+    }
+    
+    // Create strings (displayed in reverse order: high e at top, low E at bottom)
+    for (let i = STRINGS.length - 1; i >= 0; i--) {
+        const stringDiv = document.createElement('div');
+        stringDiv.className = 'mini-string-visual';
+        
+        const label = document.createElement('div');
+        label.className = 'mini-string-label-visual';
+        label.textContent = STRINGS[i];
+        
+        const fretSegments = document.createElement('div');
+        fretSegments.className = 'mini-fret-segments';
+        
+        // Create fret segments
+        for (let j = minFret; j <= maxFret; j++) {
+            const segment = document.createElement('div');
+            segment.className = 'mini-fret-segment';
+            segment.dataset.string = i;
+            segment.dataset.fret = j;
+            
+            const fret = frets[i];
+            if (fret === j) {
+                segment.classList.add('active');
+                // Check if root
+                if (i === rootString && j === rootFret) {
+                    segment.classList.add('root');
+                }
+                
+                // Add note label
+                const noteLabel = document.createElement('div');
+                noteLabel.className = 'mini-fret-active-note-label';
+                const note = window.getNoteAtPosition ? window.getNoteAtPosition(i, j) : '';
+                noteLabel.textContent = note;
+                segment.appendChild(noteLabel);
+            } else if (fret === -1 && j === 0) {
+                segment.classList.add('muted');
+                const muteLabel = document.createElement('div');
+                muteLabel.className = 'mini-fret-mute-label';
+                muteLabel.textContent = '✕';
+                segment.appendChild(muteLabel);
+            }
+            
+            fretSegments.appendChild(segment);
+        }
+        
+        stringDiv.appendChild(label);
+        stringDiv.appendChild(fretSegments);
+        container.appendChild(stringDiv);
+    }
+    
+    return container;
+}
+
 // Display all voicings as mini fretboards
 function displayAllVoicingsInGrid(chordName, chordData) {
     const grid = document.getElementById('allVoicingsGrid');
@@ -445,18 +597,24 @@ function displayAllVoicingsInGrid(chordName, chordData) {
         return aTotalFrets - bTotalFrets;
     });
     
-    // Display as mini fretboards
+    // Display as mini visual fretboards
     allVoicings.forEach((voicing, index) => {
         const voicingCard = document.createElement('div');
         voicingCard.className = 'voicing-card';
         
-        const fretboardDisplay = createASCIIFretboard(voicing.frets);
-        const label = index === 0 ? 'Main' : `Voicing ${index}`;
+        const miniFretboard = createMiniFretboardVisual(voicing.frets, voicing.root);
+        const label = index === 0 ? 'Main' : getVoicingName(voicing.frets, voicing.root);
         
-        voicingCard.innerHTML = `
-            <div class="voicing-card-fretboard">${fretboardDisplay}</div>
-            <div class="voicing-card-label">${label}</div>
-        `;
+        const fretboardContainer = document.createElement('div');
+        fretboardContainer.className = 'voicing-card-fretboard';
+        fretboardContainer.appendChild(miniFretboard);
+        
+        const labelDiv = document.createElement('div');
+        labelDiv.className = 'voicing-card-label';
+        labelDiv.textContent = label;
+        
+        voicingCard.appendChild(fretboardContainer);
+        voicingCard.appendChild(labelDiv);
         
         voicingCard.addEventListener('click', () => {
             displayChordOnSelectedFretboard(voicing.frets);
