@@ -752,3 +752,6 @@ function findAllVoicingsByNotes(notes) {
     return VOICING_LOOKUP[noteKey] || [];
 }
 
+// Export for use in other modules
+window.findAllVoicingsByNotes = findAllVoicingsByNotes;
+

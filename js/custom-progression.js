@@ -2,6 +2,28 @@
 let customProgressionChords = [];
 let customProgressionKey = 'E';
 let customProgressionMinor = false;
+let customProgressionVoicings = {}; // Store selected voicing for each chord: { chordName: { frets: [...], positionIndex: 0 } }
+
+// Add custom locked chord to progression
+function addCustomChordToProgression(lockedChord) {
+    // Create a special entry for locked chords
+    customProgressionChords.push({
+        chordName: lockedChord.name,
+        romanNumeral: '?', // Will be calculated if possible
+        isCustom: true,
+        customFrets: lockedChord.frets,
+        customNotes: lockedChord.notes
+    });
+    
+    // Store voicing
+    customProgressionVoicings[lockedChord.name] = {
+        frets: lockedChord.frets,
+        positionIndex: 0,
+        isCustom: true
+    };
+    
+    updateCustomProgressionDisplay();
+}
 
 // Initialize custom progression builder
 function initCustomProgression() {
@@ -88,6 +110,7 @@ function initCustomProgression() {
     if (clearBtn) {
         clearBtn.addEventListener('click', () => {
             customProgressionChords = [];
+            customProgressionVoicings = {};
             updateCustomProgressionDisplay();
         });
     }
@@ -107,10 +130,25 @@ function addChordToProgression(chordName) {
     // Find the Roman numeral for this chord
     const roman = getRomanNumeralFromChord(chordName, customProgressionKey, customProgressionMinor);
     
+    // Get first voicing for this chord
+    const chordData = CHORD_DICTIONARY[chordName];
+    let defaultVoicing = null;
+    if (chordData && chordData.positions && chordData.positions.length > 0) {
+        defaultVoicing = {
+            frets: chordData.positions[0].frets,
+            positionIndex: 0
+        };
+    }
+    
     customProgressionChords.push({
         chordName: chordName,
         romanNumeral: roman
     });
+    
+    // Store default voicing
+    if (defaultVoicing) {
+        customProgressionVoicings[chordName] = defaultVoicing;
+    }
     
     updateCustomProgressionDisplay();
 }
@@ -120,10 +158,25 @@ function addRomanToProgression(roman) {
     const chordName = getChordFromRomanNumeral(roman, customProgressionKey, customProgressionMinor);
     
     if (chordName) {
+        // Get first voicing for this chord
+        const chordData = CHORD_DICTIONARY[chordName];
+        let defaultVoicing = null;
+        if (chordData && chordData.positions && chordData.positions.length > 0) {
+            defaultVoicing = {
+                frets: chordData.positions[0].frets,
+                positionIndex: 0
+            };
+        }
+        
         customProgressionChords.push({
             chordName: chordName,
             romanNumeral: roman
         });
+        
+        // Store default voicing
+        if (defaultVoicing) {
+            customProgressionVoicings[chordName] = defaultVoicing;
+        }
         
         updateCustomProgressionDisplay();
     }
@@ -317,14 +370,30 @@ function updateCustomProgressionDisplay() {
         // Update Roman numeral if key changed
         const updatedRoman = getRomanNumeralFromChord(item.chordName, customProgressionKey, customProgressionMinor);
         
-        // Chord display
+        // Chord display with voicing selector
+        const chordWrapper = document.createElement('div');
+        chordWrapper.className = 'progression-chord-wrapper';
+        
         const chordSpan = document.createElement('span');
         chordSpan.className = 'progression-chord-item';
         chordSpan.textContent = item.chordName;
         chordSpan.addEventListener('click', () => {
-            displayChordOnFretboard(item.chordName);
+            showVoicingSelector(item.chordName, chordWrapper);
         });
-        chordsContainer.appendChild(chordSpan);
+        chordWrapper.appendChild(chordSpan);
+        
+        // Voicing indicator
+        const voicingBadge = document.createElement('span');
+        voicingBadge.className = 'voicing-badge';
+        voicingBadge.textContent = '🎸';
+        voicingBadge.title = 'Click to select voicing';
+        voicingBadge.addEventListener('click', (e) => {
+            e.stopPropagation();
+            showVoicingSelector(item.chordName, chordWrapper);
+        });
+        chordWrapper.appendChild(voicingBadge);
+        
+        chordsContainer.appendChild(chordWrapper);
         
         // Roman numeral display
         const romanSpan = document.createElement('span');
@@ -351,32 +420,420 @@ function updateCustomProgressionDisplay() {
         const roman = getRomanNumeralFromChord(item.chordName, customProgressionKey, customProgressionMinor);
         item.romanNumeral = roman;
     });
+    
+    // Auto-detect and suggest key
+    detectProgressionKey();
+}
+
+// Show voicing selector for a chord
+function showVoicingSelector(chordName, wrapperElement) {
+    // Check if this is a custom locked chord
+    const customChord = customProgressionChords.find(c => c.chordName === chordName && c.isCustom);
+    if (customChord) {
+        // For custom chords, just use the stored voicing
+        return;
+    }
+    
+    const chordData = CHORD_DICTIONARY[chordName];
+    if (!chordData) return;
+    
+    // Find all voicings for this chord (using global function from chord-dictionary.js)
+    const matchingChords = window.findAllVoicingsByNotes ? window.findAllVoicingsByNotes(chordData.notes) : [];
+    const allVoicings = [];
+    const seenFretCombos = new Set();
+    
+    for (const matchingChord of matchingChords) {
+        const data = CHORD_DICTIONARY[matchingChord.chordName];
+        if (data && data.positions) {
+            for (let i = 0; i < data.positions.length; i++) {
+                const frets = data.positions[i].frets;
+                const fretKey = frets.join(',');
+                
+                if (!seenFretCombos.has(fretKey)) {
+                    seenFretCombos.add(fretKey);
+                    allVoicings.push({
+                        chordName: matchingChord.chordName,
+                        positionIndex: i,
+                        frets: frets,
+                        root: data.positions[i].root
+                    });
+                }
+            }
+        }
+    }
+    
+    // Sort by simplicity
+    allVoicings.sort((a, b) => {
+        const aOpenStrings = a.frets.filter(f => f === 0).length;
+        const bOpenStrings = b.frets.filter(f => f === 0).length;
+        const aTotalFrets = a.frets.filter(f => f > 0).reduce((sum, f) => sum + f, 0);
+        const bTotalFrets = b.frets.filter(f => f > 0).reduce((sum, f) => sum + f, 0);
+        if (bOpenStrings !== aOpenStrings) {
+            return bOpenStrings - aOpenStrings;
+        }
+        return aTotalFrets - bTotalFrets;
+    });
+    
+    // Remove existing selector if present
+    const existingSelector = wrapperElement.querySelector('.voicing-selector');
+    if (existingSelector) {
+        existingSelector.remove();
+        return;
+    }
+    
+    // Create voicing selector dropdown
+    const selector = document.createElement('div');
+    selector.className = 'voicing-selector';
+    
+    const title = document.createElement('div');
+    title.className = 'voicing-selector-title';
+    title.textContent = `Select voicing for ${chordName}:`;
+    selector.appendChild(title);
+    
+    const voicingsList = document.createElement('div');
+    voicingsList.className = 'voicing-selector-list';
+    
+    allVoicings.slice(0, 12).forEach((voicing, idx) => {
+        const voicingItem = document.createElement('div');
+        voicingItem.className = 'voicing-selector-item';
+        
+        const fretboardDisplay = window.createASCIIFretboard ? window.createASCIIFretboard(voicing.frets) : '';
+        voicingItem.innerHTML = `
+            <div class="voicing-selector-fretboard">${fretboardDisplay}</div>
+            <div class="voicing-selector-label">Voicing ${idx + 1}</div>
+        `;
+        
+        voicingItem.addEventListener('click', () => {
+            customProgressionVoicings[chordName] = {
+                frets: voicing.frets,
+                positionIndex: voicing.positionIndex
+            };
+            selector.remove();
+            updateCustomProgressionDisplay();
+        });
+        
+        voicingsList.appendChild(voicingItem);
+    });
+    
+    selector.appendChild(voicingsList);
+    wrapperElement.appendChild(selector);
+}
+
+// Detect key from progression
+function detectProgressionKey() {
+    if (customProgressionChords.length === 0) return;
+    
+    // Try to detect the most likely key based on chord roots
+    const chordRoots = customProgressionChords.map(item => {
+        const match = item.chordName.match(/^([A-G][#b]?)/);
+        return match ? match[1] : null;
+    }).filter(r => r);
+    
+    if (chordRoots.length === 0) return;
+    
+    // Find the most common root (likely the key)
+    const rootCounts = {};
+    chordRoots.forEach(root => {
+        rootCounts[root] = (rootCounts[root] || 0) + 1;
+    });
+    
+    const mostCommonRoot = Object.entries(rootCounts)
+        .sort((a, b) => b[1] - a[1])[0][0];
+    
+    // Update key selector if it matches
+    const keySelect = document.getElementById('customProgressionKey');
+    if (keySelect && mostCommonRoot) {
+        // Try to match enharmonic equivalents
+        const rootIndex = NOTE_NAMES.indexOf(mostCommonRoot);
+        if (rootIndex !== -1) {
+            const suggestedKey = NOTE_NAMES[rootIndex];
+            if (keySelect.querySelector(`option[value="${suggestedKey}"]`)) {
+                keySelect.value = suggestedKey;
+                customProgressionKey = suggestedKey;
+            }
+        }
+    }
 }
 
 // Display custom progression with fretboards
 function displayCustomProgression() {
     if (customProgressionChords.length === 0) return;
     
-    // Scroll to fretboard
-    const fretboardContainer = document.querySelector('.fretboard-container');
-    if (fretboardContainer) {
-        fretboardContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    // Create progression display section
+    let progressionDisplay = document.getElementById('progressionDisplay');
+    if (!progressionDisplay) {
+        progressionDisplay = document.createElement('div');
+        progressionDisplay.id = 'progressionDisplay';
+        progressionDisplay.className = 'progression-display-section';
+        
+        const container = document.querySelector('.fretboard-container');
+        if (container) {
+            container.insertBefore(progressionDisplay, container.firstChild);
+        }
     }
     
-    // Display first chord
-    displayChordOnFretboard(customProgressionChords[0].chordName);
+    progressionDisplay.innerHTML = '';
     
-    // Highlight progression in display
-    const chordItems = document.querySelectorAll('.progression-chord-item');
-    chordItems.forEach((item, index) => {
-        if (index === 0) {
-            item.classList.add('active');
+    // Detect key
+    detectProgressionKey();
+    
+    // Key suggestion
+    const keyInfo = document.createElement('div');
+    keyInfo.className = 'progression-key-info';
+    keyInfo.innerHTML = `
+        <h3>Progression in ${customProgressionKey}${customProgressionMinor ? 'm' : ''}</h3>
+        <p>Suggested scales for soloing: ${getRecommendedScalesForProgression()}</p>
+    `;
+    progressionDisplay.appendChild(keyInfo);
+    
+    // Display each chord with selected voicing
+    const progressionChords = document.createElement('div');
+    progressionChords.className = 'progression-chords-display';
+    
+    customProgressionChords.forEach((item, index) => {
+        const chordCard = document.createElement('div');
+        chordCard.className = 'progression-chord-card';
+        
+        const chordHeader = document.createElement('div');
+        chordHeader.className = 'progression-chord-header';
+        chordHeader.innerHTML = `
+            <span class="progression-chord-name">${item.chordName}</span>
+            <span class="progression-chord-roman">${item.romanNumeral || ''}</span>
+        `;
+        chordCard.appendChild(chordHeader);
+        
+        // Get selected voicing or use first
+        const selectedVoicing = customProgressionVoicings[item.chordName];
+        const chordData = CHORD_DICTIONARY[item.chordName];
+        
+        // Handle custom locked chords
+        if (item.isCustom && selectedVoicing) {
+            // Display custom chord voicing
+            const voicingFretboard = document.createElement('div');
+            voicingFretboard.className = 'progression-voicing-fretboard';
+            
+            // Create mini fretboard
+            const miniFretboard = createMiniFretboard(selectedVoicing.frets);
+            voicingFretboard.appendChild(miniFretboard);
+            
+            chordCard.appendChild(voicingFretboard);
+            
+            // Click to show full fretboard
+            chordCard.addEventListener('click', () => {
+                // Convert -1 to null for currentFingering
+                const frets = selectedVoicing.frets.map(f => f === -1 ? null : f);
+                window.currentFingering = frets;
+                if (typeof updateFretboardDisplay === 'function') {
+                    updateFretboardDisplay();
+                }
+                
+                // Update chord info
+                document.getElementById('currentChord').textContent = item.chordName;
+                document.getElementById('chordNotes').innerHTML = `<h4>Notes</h4><p>${item.customNotes ? item.customNotes.join(', ') : ''}</p>`;
+                document.getElementById('chordIntervals').innerHTML = '<h4>Intervals</h4><p>Custom Chord</p>';
+            });
+        } else if (selectedVoicing && chordData) {
+            // Display selected voicing for regular chords
+            const voicingFretboard = document.createElement('div');
+            voicingFretboard.className = 'progression-voicing-fretboard';
+            
+            // Create mini fretboard
+            const miniFretboard = createMiniFretboard(selectedVoicing.frets);
+            voicingFretboard.appendChild(miniFretboard);
+            
+            chordCard.appendChild(voicingFretboard);
+            
+            // Click to show full fretboard
+            chordCard.addEventListener('click', () => {
+                window.currentFingering = selectedVoicing.frets;
+                if (typeof updateFretboardDisplay === 'function') {
+                    updateFretboardDisplay();
+                }
+                if (typeof displayChordOnFretboard === 'function') {
+                    displayChordOnFretboard(item.chordName);
+                }
+            });
         }
+        
+        progressionChords.appendChild(chordCard);
     });
+    
+    progressionDisplay.appendChild(progressionChords);
+    
+    // Show scale maps
+    const scaleMaps = createProgressionScaleMaps();
+    if (scaleMaps) {
+        progressionDisplay.appendChild(scaleMaps);
+    }
+    
+    // Scroll to display
+    progressionDisplay.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// Get recommended scales for progression
+function getRecommendedScalesForProgression() {
+    if (customProgressionChords.length === 0) return '';
+    
+    const scales = [];
+    
+    if (customProgressionMinor) {
+        scales.push('Natural Minor', 'Minor Pentatonic', 'Harmonic Minor');
+    } else {
+        scales.push('Major', 'Major Pentatonic', 'Mixolydian');
+    }
+    
+    // Check for dominant chords
+    const hasDominant = customProgressionChords.some(item => 
+        item.chordName.includes('7') && !item.chordName.includes('maj7')
+    );
+    
+    if (hasDominant) {
+        scales.push('Blues Scale');
+    }
+    
+    return scales.join(', ');
+}
+
+// Create mini fretboard for progression display
+function createMiniFretboard(frets) {
+    const container = document.createElement('div');
+    container.className = 'mini-fretboard';
+    
+    const strings = ['e', 'B', 'G', 'D', 'A', 'E'];
+    const stringIndices = [5, 4, 3, 2, 1, 0];
+    
+    // Find the highest fret
+    const activeFrets = frets.filter(f => f > 0);
+    const maxFret = activeFrets.length > 0 ? Math.max(...activeFrets) : 0;
+    const minFret = activeFrets.length > 0 ? Math.min(...activeFrets) : 0;
+    
+    // Show frets from minFret to maxFret + 1 (or 0-4 if all open)
+    const startFret = Math.max(0, minFret - 1);
+    const endFret = Math.min(15, maxFret + 2);
+    const fretRange = endFret - startFret;
+    
+    // Fret numbers
+    const fretNumbers = document.createElement('div');
+    fretNumbers.className = 'mini-fret-numbers';
+    for (let f = startFret; f <= endFret; f++) {
+        const num = document.createElement('span');
+        num.className = 'mini-fret-number';
+        num.textContent = f;
+        fretNumbers.appendChild(num);
+    }
+    container.appendChild(fretNumbers);
+    
+    // Strings
+    for (let i = 0; i < strings.length; i++) {
+        const stringIndex = stringIndices[i];
+        const stringDiv = document.createElement('div');
+        stringDiv.className = 'mini-string';
+        
+        const stringLabel = document.createElement('span');
+        stringLabel.className = 'mini-string-label';
+        stringLabel.textContent = strings[i];
+        stringDiv.appendChild(stringLabel);
+        
+        const fretsDiv = document.createElement('div');
+        fretsDiv.className = 'mini-frets';
+        
+        for (let f = startFret; f <= endFret; f++) {
+            const fretCell = document.createElement('div');
+            fretCell.className = 'mini-fret-cell';
+            
+            const fret = frets[stringIndex];
+            if (fret === f) {
+                fretCell.classList.add('active');
+                const note = window.getNoteAtPosition ? window.getNoteAtPosition(stringIndex, fret) : '';
+                if (note) {
+                    const noteLabel = document.createElement('span');
+                    noteLabel.className = 'mini-fret-note';
+                    noteLabel.textContent = note;
+                    fretCell.appendChild(noteLabel);
+                }
+            } else if (fret === -1) {
+                fretCell.classList.add('muted');
+                fretCell.textContent = '✕';
+            }
+            
+            fretsDiv.appendChild(fretCell);
+        }
+        
+        stringDiv.appendChild(fretsDiv);
+        container.appendChild(stringDiv);
+    }
+    
+    return container;
+}
+
+// Create scale maps for progression
+function createProgressionScaleMaps() {
+    if (!customProgressionKey) return null;
+    
+    const scaleSection = document.createElement('div');
+    scaleSection.className = 'progression-scales-section';
+    scaleSection.innerHTML = '<h4>Solo Scale Maps</h4>';
+    
+    const scalesContainer = document.createElement('div');
+    scalesContainer.className = 'progression-scales-container';
+    
+    // Get recommended scales
+    const recommendedScales = customProgressionMinor 
+        ? ['minor-pentatonic', 'minor', 'harmonic-minor']
+        : ['major-pentatonic', 'major', 'mixolydian'];
+    
+    recommendedScales.forEach(scaleType => {
+        const scaleTemplate = SCALE_BINARY_TEMPLATES[scaleType];
+        if (!scaleTemplate) return;
+        
+        const scaleCard = document.createElement('div');
+        scaleCard.className = 'progression-scale-card';
+        
+        const scaleTitle = document.createElement('div');
+        scaleTitle.className = 'progression-scale-title';
+        scaleTitle.textContent = `${customProgressionKey} ${scaleTemplate.name}`;
+        scaleCard.appendChild(scaleTitle);
+        
+        // Create mini scale map
+        const scaleNotes = getScaleNotes(customProgressionKey, scaleType);
+        const notesLabel = document.createElement('div');
+        notesLabel.className = 'progression-scale-notes';
+        notesLabel.textContent = `Notes: ${scaleNotes.join(', ')}`;
+        scaleCard.appendChild(notesLabel);
+        
+        // Click to show full scale
+        scaleCard.addEventListener('click', () => {
+            // Switch to scales section and set the scale
+            const scalesSection = document.getElementById('scalesSection');
+            const scaleTypeSelect = document.getElementById('scaleType');
+            const scaleRootSelect = document.getElementById('scaleRoot');
+            
+            if (scaleTypeSelect && scaleRootSelect) {
+                scaleTypeSelect.value = scaleType;
+                scaleRootSelect.value = customProgressionKey;
+                
+                if (typeof updateScales === 'function') {
+                    updateScales();
+                }
+                
+                // Switch to scales section
+                const navBtn = document.querySelector('.nav-btn[data-section="scales"]');
+                if (navBtn) {
+                    navBtn.click();
+                }
+            }
+        });
+        
+        scalesContainer.appendChild(scaleCard);
+    });
+    
+    scaleSection.appendChild(scalesContainer);
+    return scaleSection;
 }
 
 // Export functions
 window.initCustomProgression = initCustomProgression;
 window.addChordToProgression = addChordToProgression;
 window.addRomanToProgression = addRomanToProgression;
+window.addCustomChordToProgression = addCustomChordToProgression;
 

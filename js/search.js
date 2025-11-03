@@ -25,14 +25,10 @@ function initSearch() {
     // Initialize note selector
     initNoteSelector();
     
-    // Debounced search for better performance
-    const debouncedFilter = debounce(() => {
-        filterChords();
-    }, 150);
-    
+    // Instant search (no debounce for immediate feedback)
     searchInput.addEventListener('input', (e) => {
         currentSearch = e.target.value.toLowerCase();
-        debouncedFilter();
+        filterChords();
     });
     
     // Keyboard shortcuts

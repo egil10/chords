@@ -12,6 +12,28 @@
     --shadow: rgba(0, 0, 0, 0.1);
     --chord-active: #0d6efd;
     --chord-hover: #3d8bfd;
+    --fretboard-bg: #ffffff;
+    --fretboard-border: #000000;
+    --fretboard-text: #000000;
+    --fretboard-note-label: #666666;
+}
+
+[data-theme="dark"] {
+    --bg-primary: #0a0a0a;
+    --bg-secondary: #1a1a1a;
+    --bg-tertiary: #2a2a2a;
+    --text-primary: #ffffff;
+    --text-secondary: #b0b0b0;
+    --accent: #4a9eff;
+    --accent-hover: #6bb3ff;
+    --border: #333333;
+    --shadow: rgba(0, 0, 0, 0.5);
+    --chord-active: #4a9eff;
+    --chord-hover: #6bb3ff;
+    --fretboard-bg: #1a1a1a;
+    --fretboard-border: #ffffff;
+    --fretboard-text: #ffffff;
+    --fretboard-note-label: #cccccc;
 }
 
 * {
@@ -32,12 +54,73 @@ body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
+    position: relative;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Starry night effect for dark mode */
+body[data-theme="dark"]::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
+    z-index: -2;
+    pointer-events: none;
+}
+
+body[data-theme="dark"]::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        radial-gradient(2px 2px at 20% 30%, rgba(255, 255, 255, 0.9), transparent),
+        radial-gradient(2px 2px at 60% 70%, rgba(255, 255, 255, 0.9), transparent),
+        radial-gradient(1px 1px at 50% 50%, rgba(255, 255, 255, 0.8), transparent),
+        radial-gradient(1px 1px at 80% 10%, rgba(255, 255, 255, 0.8), transparent),
+        radial-gradient(2px 2px at 90% 40%, rgba(255, 255, 255, 0.9), transparent),
+        radial-gradient(1px 1px at 33% 60%, rgba(255, 255, 255, 0.7), transparent),
+        radial-gradient(1px 1px at 66% 20%, rgba(255, 255, 255, 0.7), transparent),
+        radial-gradient(2px 2px at 10% 80%, rgba(255, 255, 255, 0.9), transparent),
+        radial-gradient(1px 1px at 40% 90%, rgba(255, 255, 255, 0.7), transparent),
+        radial-gradient(1px 1px at 70% 50%, rgba(255, 255, 255, 0.7), transparent),
+        radial-gradient(1px 1px at 15% 45%, rgba(255, 255, 255, 0.6), transparent),
+        radial-gradient(1px 1px at 75% 25%, rgba(255, 255, 255, 0.6), transparent),
+        radial-gradient(1px 1px at 45% 75%, rgba(255, 255, 255, 0.6), transparent),
+        radial-gradient(1px 1px at 85% 55%, rgba(255, 255, 255, 0.6), transparent),
+        radial-gradient(1px 1px at 25% 15%, rgba(255, 255, 255, 0.5), transparent),
+        radial-gradient(1px 1px at 55% 85%, rgba(255, 255, 255, 0.5), transparent),
+        radial-gradient(1px 1px at 95% 65%, rgba(255, 255, 255, 0.5), transparent),
+        radial-gradient(1px 1px at 35% 35%, rgba(255, 255, 255, 0.5), transparent);
+    background-repeat: repeat;
+    background-size: 200% 200%;
+    animation: twinkle 25s linear infinite;
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0.8;
+}
+
+@keyframes twinkle {
+    0% { background-position: 0% 0%; opacity: 0.8; }
+    50% { opacity: 0.6; }
+    100% { background-position: 100% 100%; opacity: 0.8; }
 }
 
 .container {
     max-width: 1400px;
     margin: 0 auto;
     padding: 1.5rem;
+    position: relative;
+    z-index: 1;
+}
+
+[data-theme="dark"] .container {
+    background: transparent;
 }
 
 @media (min-width: 768px) {
@@ -47,13 +130,56 @@ body {
 }
 
 header {
-    margin-bottom: 1.5rem;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 1rem;
+    position: relative;
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
 }
 
 .logo {
     display: flex;
     align-items: center;
     gap: 0.75rem;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+}
+
+.theme-toggle {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    z-index: 10;
+}
+
+.theme-toggle:hover {
+    background: var(--bg-tertiary);
+    border-color: var(--accent);
+    transform: scale(1.05);
+}
+
+.theme-toggle i {
+    width: 1.25rem;
+    height: 1.25rem;
+}
+
+.logo:hover {
+    opacity: 0.7;
 }
 
 .logo i {
@@ -66,6 +192,53 @@ header {
     font-size: 1.75rem;
     font-weight: 600;
     letter-spacing: -0.02em;
+}
+
+.main-nav {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.nav-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.25rem;
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.nav-btn i {
+    width: 1.125rem;
+    height: 1.125rem;
+}
+
+.nav-btn:hover {
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+    border-color: var(--accent);
+}
+
+.nav-btn.active {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+}
+
+.section-content {
+    display: none;
+}
+
+.section-content.active {
+    display: block;
 }
 
 .controls {
@@ -264,18 +437,50 @@ header {
 }
 
 .fretboard {
-    background: var(--bg-secondary);
+    background: var(--fretboard-bg);
     border-radius: 0.5rem;
     padding: 1.5rem;
-    border: 1px solid var(--border);
+    border: 2px solid var(--fretboard-border);
     margin-bottom: 1rem;
     contain: layout style;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.fret-numbers-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.fret-numbers-label {
+    width: 2rem;
+    font-weight: 600;
+    font-size: 0.75rem;
+    color: #000000;
+    text-align: center;
+}
+
+.fret-numbers {
+    display: flex;
+    flex: 1;
+    position: relative;
+}
+
+.fret-number {
+    flex: 1;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-align: center;
+    padding-top: 0.25rem;
 }
 
 .string {
     display: flex;
     align-items: center;
-    margin-bottom: 1.5rem;
+    margin-bottom: 0.75rem;
     position: relative;
 }
 
@@ -284,24 +489,24 @@ header {
 }
 
 .string-label {
-    width: 2.5rem;
+    width: 2rem;
     font-weight: 600;
-    font-size: 0.9rem;
-    color: var(--text-secondary);
+    font-size: 0.875rem;
+    color: var(--fretboard-text);
     text-align: center;
 }
 
 .fret-segments {
     display: flex;
     flex: 1;
-    border-top: 3px solid var(--text-primary);
+    border-top: 2px solid var(--fretboard-border);
     position: relative;
 }
 
 .fret-segment {
     flex: 1;
-    height: 4rem;
-    border-right: 2px solid var(--border);
+    height: 3rem;
+    border-right: 1px solid var(--fretboard-border);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -309,40 +514,73 @@ header {
     transition: background 0.1s ease;
     position: relative;
     will-change: background;
+    flex-direction: column;
+}
+
+.fret-segment:last-child {
+    border-right: none;
 }
 
 .fret-segment:hover {
-    background: var(--bg-tertiary);
+    background: rgba(0, 0, 0, 0.05);
 }
 
-.fret-segment.active {
-    background: var(--accent);
+[data-theme="dark"] .fret-segment:hover {
+    background: rgba(255, 255, 255, 0.05);
 }
 
-.fret-segment.muted {
-    opacity: 0.3;
-}
-
-.fret-segment.muted::before {
-    content: '✕';
+.fret-note-label {
+    font-size: 0.65rem;
+    color: var(--fretboard-note-label);
+    font-weight: 500;
     position: absolute;
-    color: var(--text-primary);
-    font-size: 1.2rem;
-    font-weight: bold;
+    top: 0.25rem;
+    left: 50%;
+    transform: translateX(-50%);
+    pointer-events: none;
+}
+
+.fret-segment.active .fret-note-label {
+    color: #ffffff;
+    font-weight: 600;
+    z-index: 3;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 .fret-segment.active::after {
     content: '';
     position: absolute;
-    width: 1.5rem;
-    height: 1.5rem;
+    width: 1.25rem;
+    height: 1.25rem;
     border-radius: 50%;
-    background: var(--chord-active);
-    box-shadow: 0 2px 4px var(--shadow);
+    background: var(--fretboard-border);
+    border: 2px solid var(--fretboard-border);
+    box-shadow: none;
+    z-index: 1;
 }
 
 .fret-segment.root::after {
-    background: #ff6b6b;
+    background: var(--fretboard-border);
+    border: 2px solid var(--fretboard-bg);
+    box-shadow: 0 0 0 1px var(--fretboard-border);
+}
+
+.fret-segment.muted {
+    position: relative;
+}
+
+.fret-segment.muted::before {
+    content: '✕';
+    position: absolute;
+    color: var(--fretboard-text);
+    font-size: 1rem;
+    font-weight: bold;
+    line-height: 1;
+    z-index: 2;
+}
+
+.fret-segment.muted .fret-note-label {
+    opacity: 0.3;
 }
 
 .chord-info {
@@ -824,6 +1062,13 @@ header {
     flex-wrap: wrap;
 }
 
+.progression-chord-wrapper {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    position: relative;
+}
+
 .progression-chord-item {
     padding: 0.5rem 1rem;
     background: var(--bg-primary);
@@ -1298,5 +1543,419 @@ header {
 
 .chord-grid::-webkit-scrollbar-thumb:hover {
     background: var(--text-secondary);
+}
+
+/* Voicing selector styles */
+.voicing-badge {
+    font-size: 1rem;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    padding: 0.25rem;
+}
+
+.voicing-badge:hover {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+.voicing-selector {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    margin-top: 0.5rem;
+    background: var(--bg-primary);
+    border: 2px solid var(--border);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    box-shadow: 0 4px 12px var(--shadow);
+    z-index: 100;
+    min-width: 300px;
+    max-width: 500px;
+}
+
+.voicing-selector-title {
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    color: var(--text-primary);
+}
+
+.voicing-selector-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 0.75rem;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.voicing-selector-item {
+    padding: 0.75rem;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 0.375rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+}
+
+.voicing-selector-item:hover {
+    border-color: var(--accent);
+    background: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px var(--shadow);
+}
+
+.voicing-selector-fretboard {
+    font-family: 'Courier New', monospace;
+    font-size: 0.7rem;
+    margin-bottom: 0.5rem;
+    white-space: pre;
+    line-height: 1.2;
+}
+
+.voicing-selector-label {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.voicing-selector-item:hover .voicing-selector-label {
+    color: white;
+}
+
+/* Progression Display Section */
+.progression-display-section {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background: var(--bg-secondary);
+    border: 2px solid var(--border);
+    border-radius: 0.5rem;
+}
+
+.progression-key-info {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.progression-key-info h3 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: var(--accent);
+}
+
+.progression-key-info p {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+}
+
+.progression-chords-display {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.progression-chord-card {
+    background: var(--bg-primary);
+    border: 2px solid var(--border);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.progression-chord-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px var(--shadow);
+}
+
+.progression-chord-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.progression-chord-name {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.progression-chord-roman {
+    font-size: 0.9rem;
+    color: var(--accent);
+    font-family: 'Times New Roman', serif;
+}
+
+.progression-voicing-fretboard {
+    margin-top: 0.5rem;
+}
+
+/* Mini Fretboard */
+.mini-fretboard {
+    font-family: 'Courier New', monospace;
+    font-size: 0.7rem;
+}
+
+.mini-fret-numbers {
+    display: flex;
+    margin-bottom: 0.25rem;
+    padding-left: 2rem;
+}
+
+.mini-fret-number {
+    flex: 1;
+    text-align: center;
+    font-size: 0.65rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+
+.mini-string {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.15rem;
+}
+
+.mini-string-label {
+    width: 1.5rem;
+    font-weight: 600;
+    font-size: 0.7rem;
+    color: var(--text-primary);
+    text-align: center;
+}
+
+.mini-frets {
+    display: flex;
+    flex: 1;
+}
+
+.mini-fret-cell {
+    flex: 1;
+    height: 1.25rem;
+    border-right: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    font-size: 0.6rem;
+}
+
+.mini-fret-cell.active {
+    background: var(--accent);
+    color: white;
+    border-radius: 50%;
+    width: 1rem;
+    height: 1rem;
+    margin: 0 auto;
+}
+
+.mini-fret-cell.muted {
+    color: var(--text-secondary);
+}
+
+.mini-fret-note {
+    font-size: 0.5rem;
+    font-weight: 600;
+    color: white;
+}
+
+/* Progression Scales Section */
+.progression-scales-section {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+}
+
+.progression-scales-section h4 {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+}
+
+.progression-scales-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.progression-scale-card {
+    background: var(--bg-primary);
+    border: 2px solid var(--border);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.progression-scale-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px var(--shadow);
+}
+
+.progression-scale-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+}
+
+.progression-scale-notes {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+/* Lock Chord Section */
+.lock-chord-section {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+}
+
+.btn-lock-chord {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-lock-chord:hover {
+    background: var(--accent-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px var(--shadow);
+}
+
+.btn-lock-chord i {
+    width: 1rem;
+    height: 1rem;
+}
+
+/* Locked Chords Section */
+.custom-chords-section {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+}
+
+.custom-chords-section h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+}
+
+.locked-chords-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1rem;
+}
+
+.locked-chord-card {
+    background: var(--bg-primary);
+    border: 2px solid var(--border);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    transition: all 0.2s ease;
+}
+
+.locked-chord-card:hover {
+    border-color: var(--accent);
+    box-shadow: 0 4px 12px var(--shadow);
+}
+
+.locked-chord-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.locked-chord-name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.locked-chord-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.btn-add-to-progression,
+.btn-play-chord,
+.btn-delete-chord {
+    width: 2rem;
+    height: 2rem;
+    border: 1px solid var(--border);
+    border-radius: 0.375rem;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    padding: 0;
+}
+
+.btn-add-to-progression:hover {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+}
+
+.btn-play-chord:hover {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+}
+
+.btn-delete-chord:hover {
+    background: #dc3545;
+    color: white;
+    border-color: #dc3545;
+}
+
+.btn-add-to-progression i,
+.btn-play-chord i,
+.btn-delete-chord i {
+    width: 1rem;
+    height: 1rem;
+}
+
+.locked-chord-notes {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.75rem;
+}
+
+.locked-chord-fretboard {
+    font-family: 'Courier New', monospace;
+    font-size: 0.7rem;
+    background: var(--bg-secondary);
+    padding: 0.5rem;
+    border-radius: 0.375rem;
+    overflow-x: auto;
+}
+
+.locked-chord-fretboard pre {
+    margin: 0;
+    white-space: pre;
+    line-height: 1.2;
 }
 

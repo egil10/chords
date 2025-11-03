@@ -4,14 +4,38 @@ const STRINGS = ['E', 'A', 'D', 'G', 'B', 'E'];
 const FRETS_TO_SHOW = 15;
 
 let currentFingering = [null, null, null, null, null, null]; // [-1 for muted, fret number for fretted]
+// Export for use in other modules
+window.currentFingering = currentFingering;
 
 // Initialize the fretboard
 function initFretboard() {
     const fretboard = document.getElementById('fretboard');
     fretboard.innerHTML = '';
 
-    // Create strings
-    for (let i = 0; i < STRINGS.length; i++) {
+    // Create fret numbers row
+    const fretNumbersRow = document.createElement('div');
+    fretNumbersRow.className = 'fret-numbers-row';
+    
+    const fretNumbersLabel = document.createElement('div');
+    fretNumbersLabel.className = 'fret-numbers-label';
+    fretNumbersLabel.textContent = '';
+    fretNumbersRow.appendChild(fretNumbersLabel);
+    
+    const fretNumbers = document.createElement('div');
+    fretNumbers.className = 'fret-numbers';
+    
+    for (let j = 0; j <= FRETS_TO_SHOW; j++) {
+        const fretNum = document.createElement('div');
+        fretNum.className = 'fret-number';
+        fretNum.textContent = j;
+        fretNumbers.appendChild(fretNum);
+    }
+    
+    fretNumbersRow.appendChild(fretNumbers);
+    fretboard.appendChild(fretNumbersRow);
+
+    // Create strings (displayed in reverse order: high e at top, low E at bottom)
+    for (let i = STRINGS.length - 1; i >= 0; i--) {
         const stringDiv = document.createElement('div');
         stringDiv.className = 'string';
         
@@ -26,8 +50,16 @@ function initFretboard() {
         for (let j = 0; j <= FRETS_TO_SHOW; j++) {
             const segment = document.createElement('div');
             segment.className = 'fret-segment';
-            segment.dataset.string = i;
+            segment.dataset.string = i; // Keep original string index for data
             segment.dataset.fret = j;
+            
+            // Add note label
+            const noteLabel = document.createElement('div');
+            noteLabel.className = 'fret-note-label';
+            const note = getNoteAtPosition(i, j);
+            noteLabel.textContent = note;
+            segment.appendChild(noteLabel);
+            
             segment.addEventListener('click', handleSegmentClick);
             fretSegments.appendChild(segment);
         }
@@ -40,18 +72,29 @@ function initFretboard() {
 
 // Handle clicking on fret segments
 function handleSegmentClick(e) {
-    const string = parseInt(e.target.dataset.string);
-    const fret = parseInt(e.target.dataset.fret);
+    // Get segment (might be clicked on note label, so check parent)
+    let segment = e.target;
+    if (e.target.classList.contains('fret-note-label')) {
+        segment = e.target.parentElement;
+    }
+    
+    const string = parseInt(segment.dataset.string);
+    const fret = parseInt(segment.dataset.fret);
     
     // Toggle: if already active, clear it
-    if (currentFingering[string] === fret) {
-        currentFingering[string] = null;
+    if (window.currentFingering[string] === fret) {
+        window.currentFingering[string] = null;
     } else {
-        currentFingering[string] = fret;
+        window.currentFingering[string] = fret;
     }
     
     updateFretboardDisplay();
     findMatchingChords();
+    
+    // Update lock button visibility
+    if (typeof window.updateLockButtonVisibility === 'function') {
+        window.updateLockButtonVisibility();
+    }
 }
 
 // Update the visual display of the fretboard
@@ -64,7 +107,14 @@ function updateFretboardDisplay() {
         
         segment.className = 'fret-segment';
         
-        if (currentFingering[string] === fret) {
+        // Update note label
+        const noteLabel = segment.querySelector('.fret-note-label');
+        if (noteLabel) {
+            const note = getNoteAtPosition(string, fret);
+            noteLabel.textContent = note;
+        }
+        
+        if (window.currentFingering[string] === fret) {
             segment.classList.add('active');
             
             // Check if this is the root note
@@ -78,6 +128,7 @@ function updateFretboardDisplay() {
 }
 
 // Get the note at a specific string and fret position
+// Get note name at a specific position (exported for use in other modules)
 function getNoteAtPosition(string, fret) {
     if (fret === null || fret === undefined) return null;
     const baseNote = STANDARD_TUNING[string];
@@ -87,9 +138,9 @@ function getNoteAtPosition(string, fret) {
 
 // Get the root note from current fingering
 function getRootNote() {
-    for (let i = 0; i < currentFingering.length; i++) {
-        if (currentFingering[i] !== null) {
-            return getNoteAtPosition(i, currentFingering[i]);
+    for (let i = 0; i < window.currentFingering.length; i++) {
+        if (window.currentFingering[i] !== null) {
+            return getNoteAtPosition(i, window.currentFingering[i]);
         }
     }
     return null;
@@ -136,14 +187,19 @@ function findMatchingChords() {
     
     // Highlight matching chord in library
     highlightChordInLibrary(matches);
+    
+    // Update lock button visibility
+    if (typeof window.updateLockButtonVisibility === 'function') {
+        window.updateLockButtonVisibility();
+    }
 }
 
 // Get active notes from current fingering
 function getActiveNotes() {
     const notes = [];
-    for (let i = 0; i < currentFingering.length; i++) {
-        if (currentFingering[i] !== null) {
-            const note = getNoteAtPosition(i, currentFingering[i]);
+    for (let i = 0; i < window.currentFingering.length; i++) {
+        if (window.currentFingering[i] !== null) {
+            const note = getNoteAtPosition(i, window.currentFingering[i]);
             if (note && !notes.includes(note)) {
                 notes.push(note);
             }
@@ -182,11 +238,41 @@ function displayChordOnFretboard(chordName) {
     
     // Use the first position
     const position = chordData.positions[0];
-    currentFingering = position.frets;
+    window.currentFingering = position.frets;
     
     updateFretboardDisplay();
     updateChordInfo(chordName, chordData);
     displayAllVoicings(chordName);
+}
+
+// Generate transposed voicings (move shape up the neck)
+function generateTransposedVoicings(baseFrets, maxFret = 15, minFret = 0) {
+    const voicings = [];
+    
+    // Find the lowest fret (excluding -1 and 0)
+    const activeFrets = baseFrets.filter(f => f > 0);
+    if (activeFrets.length === 0) return voicings;
+    
+    const minBaseFret = Math.min(...activeFrets);
+    
+    // Generate transpositions up to maxFret
+    for (let offset = 0; offset <= maxFret - minBaseFret; offset++) {
+        const transposed = baseFrets.map(f => {
+            if (f === -1) return -1; // Keep muted strings
+            if (f === 0) return 0; // Keep open strings
+            return f + offset;
+        });
+        
+        // Check if any fret exceeds maxFret
+        if (transposed.some(f => f > maxFret && f !== -1)) break;
+        
+        // Skip if all strings are muted
+        if (transposed.every(f => f === -1)) continue;
+        
+        voicings.push(transposed);
+    }
+    
+    return voicings;
 }
 
 // Display all voicings for a chord
@@ -216,21 +302,39 @@ function displayAllVoicings(chordName) {
         const data = CHORD_DICTIONARY[matchingChord.chordName];
         if (data && data.positions) {
             for (let i = 0; i < data.positions.length; i++) {
-                const frets = data.positions[i].frets;
-                // Create unique key to avoid duplicates
-                const fretKey = frets.join(',');
+                const baseFrets = data.positions[i].frets;
                 
+                // Add original position
+                const fretKey = baseFrets.join(',');
                 if (!seenFretCombos.has(fretKey)) {
                     seenFretCombos.add(fretKey);
                     allVoicings.push({
                         chordName: matchingChord.chordName,
                         positionIndex: i,
-                        frets: frets,
+                        frets: baseFrets,
                         root: data.positions[i].root,
                         notes: matchingChord.notes,
                         type: matchingChord.type
                     });
                 }
+                
+                // Generate transposed voicings (up to 10-12 more positions)
+                const transposed = generateTransposedVoicings(baseFrets, 15);
+                transposed.forEach((transposedFrets, transIndex) => {
+                    const transKey = transposedFrets.join(',');
+                    if (!seenFretCombos.has(transKey)) {
+                        seenFretCombos.add(transKey);
+                        allVoicings.push({
+                            chordName: matchingChord.chordName,
+                            positionIndex: i,
+                            frets: transposedFrets,
+                            root: data.positions[i].root,
+                            notes: matchingChord.notes,
+                            type: matchingChord.type,
+                            transposed: true
+                        });
+                    }
+                });
             }
         }
     }
@@ -272,7 +376,7 @@ function displayAllVoicings(chordName) {
         `;
         
         voicingItem.addEventListener('click', () => {
-            currentFingering = voicing.frets;
+            window.currentFingering = voicing.frets;
             updateFretboardDisplay();
             
             // Mark as active
@@ -298,12 +402,16 @@ function displayAllVoicings(chordName) {
 }
 
 // Create ASCII representation of fretboard
+// Display in standard order: high e at top, low E at bottom
+// Create ASCII fretboard representation
 function createASCIIFretboard(frets) {
-    const strings = ['E', 'A', 'D', 'G', 'B', 'e'];
-    let display = '';
+    const strings = ['e', 'B', 'G', 'D', 'A', 'E']; // High to low (top to bottom)
+    const stringIndices = [5, 4, 3, 2, 1, 0]; // Map to chord dictionary order (low E to high e)
     
+    let display = '';
     for (let i = 0; i < strings.length; i++) {
-        const fret = frets[i];
+        const stringIndex = stringIndices[i]; // Get correct index from chord data
+        const fret = frets[stringIndex];
         let fretDisplay;
         
         if (fret === -1) {
@@ -349,7 +457,7 @@ function highlightChordInLibrary(chordNames) {
 
 // Clear the fretboard
 function clearFretboard() {
-    currentFingering = [null, null, null, null, null, null];
+    window.currentFingering = [null, null, null, null, null, null];
     updateFretboardDisplay();
     findMatchingChords();
     
@@ -365,4 +473,6 @@ window.initFretboard = initFretboard;
 window.displayChordOnFretboard = displayChordOnFretboard;
 window.clearFretboard = clearFretboard;
 window.getActiveNotes = getActiveNotes;
+window.createASCIIFretboard = createASCIIFretboard;
+window.getNoteAtPosition = getNoteAtPosition;
 

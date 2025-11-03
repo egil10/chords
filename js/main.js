@@ -4,12 +4,19 @@ let isGridView = true;
 // Initialize the application
 function init() {
     // Initialize components
+    initTheme();
+    initNavigation();
     initFretboard();
     initSearch();
+    initChordBuilder();
     initToggleView();
     initProgressions();
     initCustomProgression();
     initScales();
+    initCustomChords();
+    
+    // Show chords section by default
+    document.getElementById('chordsContentSection').classList.add('active');
     
     // Populate chord library
     filterChords();
