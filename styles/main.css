@@ -40,6 +40,29 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(108, 117, 125, 0.3) transparent;
+}
+
+*::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+*::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+    background: rgba(108, 117, 125, 0.3);
+    border-radius: 10px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+    background: rgba(108, 117, 125, 0.5);
+    background-clip: padding-box;
 }
 
 html {
@@ -155,8 +178,8 @@ header {
     width: 2.5rem;
     height: 2.5rem;
     border-radius: 50%;
-    border: 1px solid var(--border);
-    background: var(--bg-secondary);
+    border: none;
+    background: none;
     color: var(--text-primary);
     display: flex;
     align-items: center;
@@ -168,8 +191,7 @@ header {
 }
 
 .theme-toggle:hover {
-    background: var(--bg-tertiary);
-    border-color: var(--accent);
+    opacity: 0.7;
     transform: scale(1.05);
 }
 
@@ -204,33 +226,31 @@ header {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    padding: 0.75rem 1.25rem;
-    border: 1px solid var(--border);
-    border-radius: 0.5rem;
+    padding: 0.625rem 1rem;
+    border: none;
+    border-radius: 0.375rem;
     background: var(--bg-secondary);
     color: var(--text-secondary);
     font-family: inherit;
-    font-size: 0.9rem;
+    font-size: 0.875rem;
     font-weight: 500;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.15s ease;
 }
 
 .nav-btn i {
-    width: 1.125rem;
-    height: 1.125rem;
+    width: 1rem;
+    height: 1rem;
 }
 
 .nav-btn:hover {
     background: var(--bg-tertiary);
     color: var(--text-primary);
-    border-color: var(--accent);
 }
 
 .nav-btn.active {
     background: var(--accent);
     color: white;
-    border-color: var(--accent);
 }
 
 .section-content {
@@ -330,31 +350,28 @@ header {
 }
 
 .note-button {
-    padding: 0.5rem 0.75rem;
-    border: 1px solid var(--border);
+    padding: 0.5rem 0.875rem;
+    border: none;
     border-radius: 0.375rem;
-    background: var(--bg-primary);
+    background: var(--bg-secondary);
     color: var(--text-primary);
     font-family: inherit;
     font-size: 0.875rem;
     font-weight: 500;
     cursor: pointer;
-    transition: all 0.1s ease;
+    transition: all 0.15s ease;
     min-width: 2.5rem;
     text-align: center;
 }
 
 .note-button:hover {
-    border-color: var(--accent);
-    background: var(--bg-secondary);
+    background: var(--bg-tertiary);
     transform: translateY(-1px);
 }
 
 .note-button.active {
-    border-color: var(--accent);
     background: var(--accent);
     color: white;
-    box-shadow: 0 2px 4px rgba(13, 110, 253, 0.2);
 }
 
 .btn-clear-small {
@@ -401,20 +418,20 @@ header {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    padding: 0.5rem 1rem;
-    border: 1px solid var(--border);
-    border-radius: 0.5rem;
-    background: var(--bg-primary);
+    padding: 0.625rem 1rem;
+    border: none;
+    border-radius: 0.375rem;
+    background: var(--bg-secondary);
     color: var(--text-primary);
     font-family: inherit;
-    font-size: 0.9rem;
+    font-size: 0.875rem;
+    font-weight: 500;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.15s ease;
 }
 
 .btn-toggle:hover {
-    border-color: var(--accent);
-    color: var(--accent);
+    background: var(--bg-tertiary);
 }
 
 .btn-toggle i {
@@ -632,32 +649,31 @@ header {
 
 .voicing-item {
     background: var(--bg-secondary);
-    border: 1px solid var(--border);
-    border-radius: 0.5rem;
-    padding: 0.875rem;
+    border: none;
+    border-radius: 0.375rem;
+    padding: 1rem;
     cursor: pointer;
-    transition: all 0.1s ease;
-    will-change: transform, border-color, background;
+    transition: all 0.15s ease;
+    will-change: transform, background;
 }
 
 .voicing-item:hover {
-    border-color: var(--accent);
     background: var(--bg-tertiary);
-    transform: translateY(-1px);
+    transform: translateY(-2px);
 }
 
 .voicing-item.active {
-    border-color: var(--accent);
     background: var(--accent);
     color: white;
 }
 
 .voicing-fretboard {
     font-family: 'Courier New', monospace;
-    font-size: 0.75rem;
-    line-height: 1.4;
+    font-size: 0.7rem;
+    line-height: 1.5;
     margin-bottom: 0.5rem;
     color: var(--text-primary);
+    white-space: pre;
 }
 
 .voicing-item.active .voicing-fretboard {
@@ -665,9 +681,11 @@ header {
 }
 
 .voicing-label {
-    font-size: 0.85rem;
+    font-size: 0.75rem;
     font-weight: 600;
     color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
 .voicing-item.active .voicing-label {
@@ -695,22 +713,20 @@ header {
 .chord-item {
     padding: 0.875rem;
     background: var(--bg-secondary);
-    border: 1px solid var(--border);
-    border-radius: 0.5rem;
+    border: none;
+    border-radius: 0.375rem;
     cursor: pointer;
-    transition: all 0.1s ease;
+    transition: all 0.15s ease;
     text-align: center;
-    will-change: transform, border-color, background;
+    will-change: transform, background;
 }
 
 .chord-item:hover {
-    border-color: var(--accent);
     background: var(--bg-tertiary);
     transform: translateY(-1px);
 }
 
 .chord-item.active {
-    border-color: var(--accent);
     background: var(--accent);
     color: white;
 }
@@ -883,20 +899,19 @@ header {
 }
 
 .progression-chord {
-    padding: 0.5rem 0.75rem;
+    padding: 0.5rem 0.875rem;
     background: var(--bg-secondary);
-    border: 1px solid var(--border);
+    border: none;
     border-radius: 0.375rem;
     color: var(--text-primary);
     font-family: inherit;
     font-size: 0.875rem;
     font-weight: 500;
     cursor: pointer;
-    transition: all 0.1s ease;
+    transition: all 0.15s ease;
 }
 
 .progression-chord:hover {
-    border-color: var(--accent);
     background: var(--accent);
     color: white;
     transform: translateY(-1px);
@@ -961,27 +976,26 @@ header {
 
 .mode-btn {
     flex: 1;
-    padding: 0.5rem 1rem;
-    border: 1px solid var(--border);
-    border-radius: 0.5rem;
+    padding: 0.625rem 1rem;
+    border: none;
+    border-radius: 0.375rem;
     background: var(--bg-secondary);
     color: var(--text-secondary);
     font-family: inherit;
     font-size: 0.875rem;
     font-weight: 500;
     cursor: pointer;
-    transition: all 0.1s ease;
+    transition: all 0.15s ease;
 }
 
 .mode-btn:hover {
-    border-color: var(--accent);
+    background: var(--bg-tertiary);
     color: var(--text-primary);
 }
 
 .mode-btn.active {
     background: var(--accent);
     color: white;
-    border-color: var(--accent);
 }
 
 .input-mode {
@@ -1007,16 +1021,16 @@ header {
 }
 
 .btn-add {
-    padding: 0.75rem 1.5rem;
-    border: 1px solid var(--accent);
-    border-radius: 0.5rem;
+    padding: 0.625rem 1.25rem;
+    border: none;
+    border-radius: 0.375rem;
     background: var(--accent);
     color: white;
     font-family: inherit;
-    font-size: 0.9rem;
+    font-size: 0.875rem;
     font-weight: 500;
     cursor: pointer;
-    transition: all 0.1s ease;
+    transition: all 0.15s ease;
 }
 
 .btn-add:hover {
@@ -1069,20 +1083,28 @@ header {
     position: relative;
 }
 
+.draggable-chord {
+    cursor: move;
+    transition: all 0.15s ease;
+}
+
+.draggable-chord:hover {
+    transform: scale(1.05);
+}
+
 .progression-chord-item {
-    padding: 0.5rem 1rem;
-    background: var(--bg-primary);
-    border: 1px solid var(--border);
+    padding: 0.5rem 0.875rem;
+    background: var(--bg-secondary);
+    border: none;
     border-radius: 0.375rem;
     color: var(--text-primary);
-    font-size: 0.9rem;
+    font-size: 0.875rem;
     font-weight: 500;
     cursor: pointer;
-    transition: all 0.1s ease;
+    transition: all 0.15s ease;
 }
 
 .progression-chord-item:hover {
-    border-color: var(--accent);
     background: var(--accent);
     color: white;
     transform: translateY(-1px);
@@ -1091,16 +1113,15 @@ header {
 .progression-chord-item.active {
     background: var(--accent);
     color: white;
-    border-color: var(--accent);
 }
 
 .roman-numeral-item {
-    padding: 0.5rem 1rem;
-    background: var(--bg-primary);
-    border: 1px solid var(--border);
+    padding: 0.5rem 0.875rem;
+    background: var(--bg-secondary);
+    border: none;
     border-radius: 0.375rem;
-    color: var(--text-primary);
-    font-size: 0.9rem;
+    color: var(--text-secondary);
+    font-size: 0.875rem;
     font-weight: 500;
     font-style: italic;
 }
@@ -1113,31 +1134,29 @@ header {
 
 .btn-clear,
 .btn-play {
-    padding: 0.75rem 1.5rem;
-    border: 1px solid var(--border);
-    border-radius: 0.5rem;
+    padding: 0.625rem 1.25rem;
+    border: none;
+    border-radius: 0.375rem;
     font-family: inherit;
-    font-size: 0.9rem;
+    font-size: 0.875rem;
     font-weight: 500;
     cursor: pointer;
-    transition: all 0.1s ease;
+    transition: all 0.15s ease;
     margin-right: 0.5rem;
 }
 
 .btn-clear {
-    background: var(--bg-primary);
+    background: var(--bg-secondary);
     color: var(--text-primary);
 }
 
 .btn-clear:hover {
-    border-color: var(--text-secondary);
     background: var(--bg-tertiary);
 }
 
 .btn-play {
     background: var(--accent);
     color: white;
-    border-color: var(--accent);
 }
 
 .btn-play:hover {
@@ -1261,8 +1280,8 @@ header {
 }
 
 .scale-position {
-    background: var(--bg-primary);
-    border: 1px solid var(--border);
+    background: var(--bg-secondary);
+    border: none;
     border-radius: 0.5rem;
     padding: 1.5rem;
 }
@@ -1277,6 +1296,9 @@ header {
 .scale-fretboard {
     margin-bottom: 1rem;
     font-family: 'Courier New', monospace;
+    background: var(--bg-primary);
+    padding: 1rem;
+    border-radius: 0.375rem;
 }
 
 .scale-string {
@@ -1302,12 +1324,12 @@ header {
 
 .scale-fret-cell {
     flex: 1;
-    height: 2.5rem;
+    height: 2rem;
     border-right: 1px solid var(--border);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     color: var(--text-primary);
     position: relative;
 }
@@ -1326,19 +1348,19 @@ header {
     background: var(--accent);
     color: white;
     border-radius: 50%;
-    width: 1.75rem;
-    height: 1.75rem;
+    width: 1.5rem;
+    height: 1.5rem;
     margin: 0 auto;
 }
 
 .scale-description-text {
-    font-size: 0.85rem;
+    font-size: 0.875rem;
     color: var(--text-secondary);
     font-style: italic;
     margin-bottom: 1rem;
-    padding: 0.5rem;
-    background: var(--bg-secondary);
-    border-radius: 0.25rem;
+    padding: 0.75rem;
+    background: var(--bg-primary);
+    border-radius: 0.375rem;
 }
 
 .scale-notes-label {
@@ -1351,7 +1373,7 @@ header {
 .caged-section {
     margin-top: 2rem;
     padding-top: 2rem;
-    border-top: 1px solid var(--border);
+    border-top: 2px solid var(--border);
 }
 
 .caged-section h4 {
@@ -1368,8 +1390,8 @@ header {
 }
 
 .caged-shape {
-    background: var(--bg-primary);
-    border: 1px solid var(--border);
+    background: var(--bg-secondary);
+    border: none;
     border-radius: 0.5rem;
     padding: 1rem;
     text-align: center;
@@ -1377,13 +1399,13 @@ header {
 
 .caged-shape-name {
     font-weight: 600;
-    font-size: 1rem;
+    font-size: 0.95rem;
     margin-bottom: 0.5rem;
     color: var(--text-primary);
 }
 
 .caged-shape-desc {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     color: var(--text-secondary);
     margin-bottom: 0.75rem;
 }
@@ -1393,6 +1415,9 @@ header {
     flex-direction: column;
     gap: 0.25rem;
     align-items: center;
+    background: var(--bg-primary);
+    padding: 0.75rem;
+    border-radius: 0.375rem;
 }
 
 .caged-string {
@@ -1401,10 +1426,11 @@ header {
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid var(--border);
+    border: none;
     border-radius: 0.25rem;
     font-size: 0.875rem;
     font-weight: 600;
+    transition: all 0.15s ease;
 }
 
 .caged-string.fretted {
@@ -1526,23 +1552,19 @@ header {
     }
 }
 
-/* Scrollbar styling */
-.chord-grid::-webkit-scrollbar {
-    width: 8px;
+/* Dark mode scrollbars */
+[data-theme="dark"] * {
+    scrollbar-color: rgba(176, 176, 176, 0.3) transparent;
 }
 
-.chord-grid::-webkit-scrollbar-track {
-    background: var(--bg-secondary);
-    border-radius: 4px;
+[data-theme="dark"] *::-webkit-scrollbar-thumb {
+    background: rgba(176, 176, 176, 0.3);
+    background-clip: padding-box;
 }
 
-.chord-grid::-webkit-scrollbar-thumb {
-    background: var(--border);
-    border-radius: 4px;
-}
-
-.chord-grid::-webkit-scrollbar-thumb:hover {
-    background: var(--text-secondary);
+[data-theme="dark"] *::-webkit-scrollbar-thumb:hover {
+    background: rgba(176, 176, 176, 0.5);
+    background-clip: padding-box;
 }
 
 /* Voicing selector styles */
@@ -1820,22 +1842,21 @@ header {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    padding: 0.75rem 1.5rem;
+    padding: 0.625rem 1.25rem;
     background: var(--accent);
     color: white;
     border: none;
-    border-radius: 0.5rem;
+    border-radius: 0.375rem;
     font-family: inherit;
-    font-size: 0.9rem;
-    font-weight: 600;
+    font-size: 0.875rem;
+    font-weight: 500;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.15s ease;
 }
 
 .btn-lock-chord:hover {
     background: var(--accent-hover);
     transform: translateY(-1px);
-    box-shadow: 0 4px 8px var(--shadow);
 }
 
 .btn-lock-chord i {
@@ -1901,7 +1922,7 @@ header {
 .btn-delete-chord {
     width: 2rem;
     height: 2rem;
-    border: 1px solid var(--border);
+    border: none;
     border-radius: 0.375rem;
     background: var(--bg-secondary);
     color: var(--text-primary);
@@ -1909,26 +1930,23 @@ header {
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.15s ease;
     padding: 0;
 }
 
 .btn-add-to-progression:hover {
     background: var(--accent);
     color: white;
-    border-color: var(--accent);
 }
 
 .btn-play-chord:hover {
     background: var(--accent);
     color: white;
-    border-color: var(--accent);
 }
 
 .btn-delete-chord:hover {
     background: #dc3545;
     color: white;
-    border-color: #dc3545;
 }
 
 .btn-add-to-progression i,
@@ -1957,5 +1975,22 @@ header {
     margin: 0;
     white-space: pre;
     line-height: 1.2;
+}
+
+.builder-selection-display {
+    padding: 0.75rem 1rem;
+    background: var(--bg-secondary);
+    border-radius: 0.375rem;
+    margin-bottom: 1rem;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    min-height: 2.5rem;
+    display: flex;
+    align-items: center;
+}
+
+.builder-selection-display strong {
+    color: var(--text-primary);
+    font-weight: 600;
 }
 

@@ -34,6 +34,7 @@ function toggleProgressions() {
 }
 
 window.toggleProgressions = toggleProgressions;
+window.updateProgressions = updateProgressions;
 
 // Update progressions display
 function updateProgressions() {

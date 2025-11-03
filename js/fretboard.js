@@ -81,8 +81,11 @@ function handleSegmentClick(e) {
     const string = parseInt(segment.dataset.string);
     const fret = parseInt(segment.dataset.fret);
     
-    // Toggle: if already active, clear it
-    if (window.currentFingering[string] === fret) {
+    // Shift+click on open position (fret 0) to mute string
+    if (e.shiftKey && fret === 0) {
+        window.currentFingering[string] = -1;
+    } else if (window.currentFingering[string] === fret) {
+        // Toggle: if already active, clear it
         window.currentFingering[string] = null;
     } else {
         window.currentFingering[string] = fret;
@@ -123,6 +126,9 @@ function updateFretboardDisplay() {
             if (note && rootNote && note === rootNote) {
                 segment.classList.add('root');
             }
+        } else if (window.currentFingering[string] === -1 && fret === 0) {
+            // Show muted string marker on open position (fret 0)
+            segment.classList.add('muted');
         }
     });
 }
@@ -283,6 +289,10 @@ function displayAllVoicings(chordName) {
     const voicingsContainer = document.getElementById('voicingsContainer');
     const voicingsList = document.getElementById('voicingsList');
     
+    // Extract root note from chord name (e.g., "C" from "C", "Cm", "Cmaj7", etc.)
+    const rootMatch = chordName.match(/^([A-G][#b]?)/);
+    const targetRoot = rootMatch ? rootMatch[1] : null;
+    
     // Find all chords with the same notes
     const matchingChords = findAllVoicingsByNotes(chordData.notes);
     
@@ -300,40 +310,51 @@ function displayAllVoicings(chordName) {
     
     for (const matchingChord of matchingChords) {
         const data = CHORD_DICTIONARY[matchingChord.chordName];
-        if (data && data.positions) {
-            for (let i = 0; i < data.positions.length; i++) {
-                const baseFrets = data.positions[i].frets;
+        if (!data || !data.positions) continue;
+        
+        // Extract root from matching chord name
+        const matchRootMatch = matchingChord.chordName.match(/^([A-G][#b]?)/);
+        const matchRoot = matchRootMatch ? matchRootMatch[1] : null;
+        
+        // Only include chords with the same root note (same chord, different voicings)
+        if (targetRoot && matchRoot && normalizeNoteName(targetRoot) !== normalizeNoteName(matchRoot)) {
+            continue; // Skip chords with different root notes
+        }
+        
+        for (let i = 0; i < data.positions.length; i++) {
+            const baseFrets = data.positions[i].frets;
+            
+            // Verify this voicing actually produces the target root note
+            // Check the lowest active string (typically the root)
+            const activeFrets = baseFrets.map((f, idx) => ({ fret: f, string: idx })).filter(x => x.fret > 0);
+            if (activeFrets.length > 0) {
+                // Find the lowest fret
+                const lowestFret = Math.min(...activeFrets.map(x => x.fret));
+                const lowestString = activeFrets.find(x => x.fret === lowestFret)?.string;
                 
-                // Add original position
-                const fretKey = baseFrets.join(',');
-                if (!seenFretCombos.has(fretKey)) {
-                    seenFretCombos.add(fretKey);
-                    allVoicings.push({
-                        chordName: matchingChord.chordName,
-                        positionIndex: i,
-                        frets: baseFrets,
-                        root: data.positions[i].root,
-                        notes: matchingChord.notes,
-                        type: matchingChord.type
-                    });
-                }
-                
-                // Generate transposed voicings (up to 10-12 more positions)
-                const transposed = generateTransposedVoicings(baseFrets, 15);
-                transposed.forEach((transposedFrets, transIndex) => {
-                    const transKey = transposedFrets.join(',');
-                    if (!seenFretCombos.has(transKey)) {
-                        seenFretCombos.add(transKey);
-                        allVoicings.push({
-                            chordName: matchingChord.chordName,
-                            positionIndex: i,
-                            frets: transposedFrets,
-                            root: data.positions[i].root,
-                            notes: matchingChord.notes,
-                            type: matchingChord.type,
-                            transposed: true
-                        });
+                if (lowestString !== undefined) {
+                    const actualRootNote = getNoteAtPosition(lowestString, lowestFret);
+                    const normalizedTargetRoot = normalizeNoteName(targetRoot);
+                    const normalizedActualRoot = normalizeNoteName(actualRootNote);
+                    
+                    // Only include if the root note matches (or if targetRoot is null, include all)
+                    if (targetRoot && normalizedActualRoot !== normalizedTargetRoot) {
+                        continue; // Skip voicings that don't have the correct root
                     }
+                }
+            }
+            
+            // Add original position
+            const fretKey = baseFrets.join(',');
+            if (!seenFretCombos.has(fretKey)) {
+                seenFretCombos.add(fretKey);
+                allVoicings.push({
+                    chordName: chordName, // Always use the original chord name
+                    positionIndex: i,
+                    frets: baseFrets,
+                    root: data.positions[i].root,
+                    notes: matchingChord.notes,
+                    type: matchingChord.type
                 });
             }
         }
@@ -366,9 +387,10 @@ function displayAllVoicings(chordName) {
         // Create ASCII fretboard representation
         const fretboardDisplay = createASCIIFretboard(voicing.frets);
         
-        const label = voicing.chordName === chordName 
-            ? (voicing.positionIndex === 0 ? 'Main' : `Voicing ${voicing.positionIndex + 1}`)
-            : `${voicing.chordName} (${voicing.type})`;
+        // Always show as voicing of the original chord
+        const label = index === 0 
+            ? 'Main Voicing' 
+            : `Voicing ${index + 1}`;
         
         voicingItem.innerHTML = `
             <div class="voicing-fretboard">${fretboardDisplay}</div>
@@ -390,7 +412,7 @@ function displayAllVoicings(chordName) {
         });
         
         // Mark first voicing as active
-        if (voicing.chordName === chordName && voicing.positionIndex === 0) {
+        if (index === 0) {
             voicingItem.classList.add('active');
         }
         

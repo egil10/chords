@@ -372,7 +372,55 @@ function updateCustomProgressionDisplay() {
         
         // Chord display with voicing selector
         const chordWrapper = document.createElement('div');
-        chordWrapper.className = 'progression-chord-wrapper';
+        chordWrapper.className = 'progression-chord-wrapper draggable-chord';
+        chordWrapper.draggable = true;
+        chordWrapper.dataset.index = index;
+        
+        // Make draggable
+        chordWrapper.addEventListener('dragstart', (e) => {
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/html', e.target.innerHTML);
+            e.dataTransfer.setData('text/plain', index.toString());
+            chordWrapper.style.opacity = '0.5';
+        });
+        
+        chordWrapper.addEventListener('dragend', () => {
+            chordWrapper.style.opacity = '1';
+        });
+        
+        chordWrapper.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            chordWrapper.style.borderTop = '3px solid var(--accent)';
+        });
+        
+        chordWrapper.addEventListener('dragleave', () => {
+            chordWrapper.style.borderTop = '';
+        });
+        
+        chordWrapper.addEventListener('drop', (e) => {
+            e.preventDefault();
+            const draggedIndex = parseInt(e.dataTransfer.getData('text/plain'));
+            const targetIndex = parseInt(chordWrapper.dataset.index);
+            
+            // Reorder chords
+            const [draggedChord] = customProgressionChords.splice(draggedIndex, 1);
+            customProgressionChords.splice(targetIndex, 0, draggedChord);
+            
+            // Reorder voicings
+            const chordNames = customProgressionChords.map(c => c.chordName);
+            const newVoicings = {};
+            chordNames.forEach(name => {
+                if (customProgressionVoicings[name]) {
+                    newVoicings[name] = customProgressionVoicings[name];
+                }
+            });
+            customProgressionVoicings = newVoicings;
+            
+            chordWrapper.style.borderTop = '';
+            updateCustomProgressionDisplay();
+            return false;
+        });
         
         const chordSpan = document.createElement('span');
         chordSpan.className = 'progression-chord-item';

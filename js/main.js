@@ -15,8 +15,8 @@ function init() {
     initScales();
     initCustomChords();
     
-    // Show chords section by default
-    document.getElementById('chordsContentSection').classList.add('active');
+    // Navigation will set the default section
+    // Don't manually set active here - let navigation handle it
     
     // Populate chord library
     filterChords();

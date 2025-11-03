@@ -27,6 +27,59 @@ const EXTENSION_OPTIONS = {
     'add9': { label: 'add9', suffix: 'add9' }
 };
 
+// Get available qualities for a root note
+function getAvailableQualities(root) {
+    const available = [];
+    const chordKeys = Object.keys(CHORD_DICTIONARY);
+    
+    Object.entries(QUALITY_OPTIONS).forEach(([key, opt]) => {
+        const chordName = root + opt.suffix;
+        // Check if this exact chord exists
+        if (chordKeys.includes(chordName)) {
+            available.push(key);
+        }
+    });
+    
+    return available;
+}
+
+// Get available extensions for a root + quality combination
+function getAvailableExtensions(root, quality) {
+    const available = [];
+    const chordKeys = Object.keys(CHORD_DICTIONARY);
+    
+    const baseChord = root + QUALITY_OPTIONS[quality].suffix;
+    
+    Object.entries(EXTENSION_OPTIONS).forEach(([key, opt]) => {
+        const chordName = baseChord + opt.suffix;
+        // Check if this exact chord exists
+        if (chordKeys.includes(chordName)) {
+            available.push(key);
+        }
+    });
+    
+    return available;
+}
+
+// Update selection display
+function updateSelectionDisplay() {
+    const selectionDisplay = document.getElementById('builderSelectionDisplay');
+    if (!selectionDisplay) return;
+    
+    let display = '';
+    if (selectedRoot) {
+        display = `<strong>${selectedRoot}</strong>`;
+        if (selectedQuality) {
+            display += ` <span style="opacity: 0.7;">→</span> <strong>${QUALITY_OPTIONS[selectedQuality].label}</strong>`;
+            if (selectedExtension) {
+                display += ` <span style="opacity: 0.7;">→</span> <strong>${EXTENSION_OPTIONS[selectedExtension].label}</strong>`;
+            }
+        }
+    }
+    
+    selectionDisplay.innerHTML = display || 'Select a root note to begin';
+}
+
 function initChordBuilder() {
     const rootOptions = document.querySelectorAll('#rootOptions .builder-opt');
     const qualityStep = document.getElementById('qualityStep');
@@ -51,9 +104,12 @@ function initChordBuilder() {
             extensionStep.style.display = 'none';
             clearBuilder.style.display = 'block';
             
-            // Populate quality options
+            // Populate quality options - only show available ones
             qualityOptions.innerHTML = '';
-            Object.entries(QUALITY_OPTIONS).forEach(([key, opt]) => {
+            const availableQualities = getAvailableQualities(selectedRoot);
+            
+            availableQualities.forEach(key => {
+                const opt = QUALITY_OPTIONS[key];
                 const btn = document.createElement('button');
                 btn.className = 'builder-opt';
                 btn.textContent = opt.label;
@@ -62,6 +118,7 @@ function initChordBuilder() {
                 qualityOptions.appendChild(btn);
             });
             
+            updateSelectionDisplay();
             updateChordSearch();
         });
     });
@@ -85,6 +142,7 @@ function initChordBuilder() {
                 extensionOptions.querySelectorAll('.builder-opt').forEach(b => b.classList.remove('selected'));
             }
             
+            updateSelectionDisplay();
             updateChordSearch();
         });
     }
@@ -108,9 +166,12 @@ function selectQuality(quality) {
     
     extensionStep.style.display = 'block';
     
-    // Populate extension options
+    // Populate extension options - only show available ones
     extensionOptions.innerHTML = '';
-    Object.entries(EXTENSION_OPTIONS).forEach(([key, opt]) => {
+    const availableExtensions = getAvailableExtensions(selectedRoot, selectedQuality);
+    
+    availableExtensions.forEach(key => {
+        const opt = EXTENSION_OPTIONS[key];
         const btn = document.createElement('button');
         btn.className = 'builder-opt';
         btn.textContent = opt.label;
@@ -119,6 +180,7 @@ function selectQuality(quality) {
         extensionOptions.appendChild(btn);
     });
     
+    updateSelectionDisplay();
     updateChordSearch();
 }
 
@@ -133,6 +195,7 @@ function selectExtension(extension) {
         }
     });
     
+    updateSelectionDisplay();
     updateChordSearch();
 }
 
