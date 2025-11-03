@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Interactive guitar chord finder with all chord voicings">
+    <title>Guitar Chord Finder</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i data-lucide="guitar"></i>
+                <h1>Chord Finder</h1>
+            </div>
+        </header>
+
+        <main>
+            <div class="controls">
+                <div class="search-container">
+                    <i data-lucide="search"></i>
+                    <input type="text" id="chordSearch" placeholder="Search chords..." autocomplete="off" spellcheck="false">
+                    <button id="clearSearch" class="btn-clear">
+                        <i data-lucide="x"></i>
+                    </button>
+                </div>
+
+                <div class="filters">
+                    <div class="note-selector">
+                        <label class="filter-label">Select Notes:</label>
+                        <div id="noteSelector" class="note-buttons">
+                            <!-- Dynamic note buttons -->
+                        </div>
+                        <button id="clearNotes" class="btn-clear-small" title="Clear selected notes">
+                            <i data-lucide="x"></i>
+                        </button>
+                    </div>
+
+                    <select id="chordTypeFilter">
+                        <option value="">All Types</option>
+                        <option value="major">Major</option>
+                        <option value="minor">Minor</option>
+                        <option value="dim">Diminished</option>
+                        <option value="aug">Augmented</option>
+                        <option value="7">Dominant 7th</option>
+                        <option value="maj7">Major 7th</option>
+                        <option value="m7">Minor 7th</option>
+                        <option value="dim7">Diminished 7th</option>
+                        <option value="aug7">Augmented 7th</option>
+                        <option value="sus2">Sus2</option>
+                        <option value="sus4">Sus4</option>
+                        <option value="add9">Add9</option>
+                        <option value="6">6th</option>
+                        <option value="m6">Minor 6th</option>
+                        <option value="9">9th</option>
+                        <option value="11">11th</option>
+                        <option value="13">13th</option>
+                        <option value="other">Other</option>
+                    </select>
+
+                    <button id="toggleView" class="btn-toggle">
+                        <i data-lucide="eye"></i>
+                        <span>Progressions</span>
+                    </button>
+                </div>
+            </div>
+
+            <div id="progressionsSection" class="progressions-section" style="display: none;">
+                <div class="progression-header">
+                    <h3>Chord Progressions</h3>
+                    <div class="progression-controls">
+                        <label for="progressionRoot">Starting Chord:</label>
+                        <select id="progressionRoot">
+                            <option value="C">C</option>
+                            <option value="C#">C#</option>
+                            <option value="Db">Db</option>
+                            <option value="D">D</option>
+                            <option value="D#">D#</option>
+                            <option value="Eb">Eb</option>
+                            <option value="E" selected>E</option>
+                            <option value="F">F</option>
+                            <option value="F#">F#</option>
+                            <option value="Gb">Gb</option>
+                            <option value="G">G</option>
+                            <option value="G#">G#</option>
+                            <option value="Ab">Ab</option>
+                            <option value="A">A</option>
+                            <option value="A#">A#</option>
+                            <option value="Bb">Bb</option>
+                            <option value="B">B</option>
+                        </select>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="progressionMinor">
+                            <span>Minor Key</span>
+                        </label>
+                    </div>
+                </div>
+                <div id="progressionsList" class="progressions-list">
+                    <!-- Dynamic progressions -->
+                </div>
+                
+                <div class="custom-progression-section">
+                    <h3>Custom Progression Builder</h3>
+                    <div class="custom-progression-controls">
+                        <label for="customProgressionKey">Key:</label>
+                        <select id="customProgressionKey">
+                            <option value="C">C</option>
+                            <option value="C#">C#</option>
+                            <option value="Db">Db</option>
+                            <option value="D">D</option>
+                            <option value="D#">D#</option>
+                            <option value="Eb">Eb</option>
+                            <option value="E" selected>E</option>
+                            <option value="F">F</option>
+                            <option value="F#">F#</option>
+                            <option value="Gb">Gb</option>
+                            <option value="G">G</option>
+                            <option value="G#">G#</option>
+                            <option value="Ab">Ab</option>
+                            <option value="A">A</option>
+                            <option value="A#">A#</option>
+                            <option value="Bb">Bb</option>
+                            <option value="B">B</option>
+                        </select>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="customProgressionMinor">
+                            <span>Minor Key</span>
+                        </label>
+                    </div>
+                    
+                    <div class="custom-progression-input">
+                        <div class="input-mode-toggle">
+                            <button class="mode-btn active" data-mode="chords">Add by Chord Name</button>
+                            <button class="mode-btn" data-mode="roman">Add by Roman Numeral</button>
+                        </div>
+                        
+                        <div id="chordInputMode" class="input-mode">
+                            <input type="text" id="chordNameInput" placeholder="e.g., C, Am, Fmaj7, G7" />
+                            <button id="addChordByName" class="btn-add">Add Chord</button>
+                        </div>
+                        
+                        <div id="romanInputMode" class="input-mode" style="display: none;">
+                            <input type="text" id="romanNumeralInput" placeholder="e.g., I, ii, V, ♭VII" />
+                            <button id="addChordByRoman" class="btn-add">Add Roman Numeral</button>
+                        </div>
+                    </div>
+                    
+                    <div id="customProgressionDisplay" class="custom-progression-display">
+                        <div class="progression-header-row">
+                            <div class="progression-chords-row">
+                                <span class="progression-label">Chords:</span>
+                                <div id="customProgressionChords" class="progression-chords-list"></div>
+                            </div>
+                            <div class="progression-roman-row">
+                                <span class="progression-label">Roman Numerals:</span>
+                                <div id="customProgressionRoman" class="roman-numerals-list"></div>
+                            </div>
+                        </div>
+                        <button id="clearCustomProgression" class="btn-clear">Clear Progression</button>
+                        <button id="playCustomProgression" class="btn-play">Show Fretboards</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content">
+                <div class="fretboard-container">
+                    <h2 id="currentChord">Click a chord to see it on the fretboard</h2>
+                    <div id="fretboard" class="fretboard">
+                        <!-- Dynamic fretboard -->
+                    </div>
+                    <div class="chord-info">
+                        <div id="chordNotes"></div>
+                        <div id="chordIntervals"></div>
+                    </div>
+                    <div id="voicingsContainer" class="voicings-container">
+                        <h3>All Voicings</h3>
+                        <div id="voicingsList" class="voicings-list">
+                            <!-- Dynamic voicings -->
+                        </div>
+                    </div>
+                    
+                    <div id="scalesSection" class="scales-section">
+                        <div class="scales-header">
+                            <h3>Scale Maps & Soloing</h3>
+                            <div class="scale-controls">
+                                <label for="scaleType">Scale:</label>
+                                <select id="scaleType">
+                                    <option value="major">Major (Ionian)</option>
+                                    <option value="minor">Natural Minor (Aeolian)</option>
+                                    <option value="major-pentatonic">Major Pentatonic</option>
+                                    <option value="minor-pentatonic" selected>Minor Pentatonic</option>
+                                    <option value="blues">Blues Scale</option>
+                                    <option value="mixolydian">Mixolydian</option>
+                                    <option value="dorian">Dorian</option>
+                                    <option value="lydian">Lydian</option>
+                                    <option value="harmonic-minor">Harmonic Minor</option>
+                                    <option value="bebop-major">Bebop Major</option>
+                                </select>
+                                <label for="scaleRoot">Root:</label>
+                                <select id="scaleRoot">
+                                    <option value="C">C</option>
+                                    <option value="C#">C#</option>
+                                    <option value="Db">Db</option>
+                                    <option value="D">D</option>
+                                    <option value="D#">D#</option>
+                                    <option value="Eb">Eb</option>
+                                    <option value="E" selected>E</option>
+                                    <option value="F">F</option>
+                                    <option value="F#">F#</option>
+                                    <option value="Gb">Gb</option>
+                                    <option value="G">G</option>
+                                    <option value="G#">G#</option>
+                                    <option value="Ab">Ab</option>
+                                    <option value="A">A</option>
+                                    <option value="A#">A#</option>
+                                    <option value="Bb">Bb</option>
+                                    <option value="B">B</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div id="scalePositions" class="scale-positions">
+                            <!-- Dynamic scale positions -->
+                        </div>
+                        <div id="cagedSection" class="caged-section">
+                            <h4>CAGED System</h4>
+                            <div id="cagedShapes" class="caged-shapes">
+                                <!-- Dynamic CAGED shapes -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chord-library">
+                    <h3>Chord Library</h3>
+                    <div id="chordGrid" class="chord-grid">
+                        <!-- Dynamic chord grid -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Core utilities (must load first) -->
+    <script src="js/utils.js"></script>
+    <!-- Data and logic -->
+    <script src="js/chord-dictionary.js"></script>
+    <script src="js/progressions.js"></script>
+    <script src="js/scales.js"></script>
+    <!-- UI components -->
+    <script src="js/fretboard.js"></script>
+    <script src="js/search.js"></script>
+    <script src="js/progressions-ui.js"></script>
+    <script src="js/custom-progression.js"></script>
+    <script src="js/scales-ui.js"></script>
+    <!-- Main application -->
+    <script src="js/main.js"></script>
+    <script>
+        // Initialize icons after DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => lucide.createIcons());
+        } else {
+            lucide.createIcons();
+        }
+    </script>
+</body>
+</html>
+
