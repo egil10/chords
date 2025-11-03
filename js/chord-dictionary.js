@@ -1,10 +1,10 @@
 // Complete guitar chord dictionary
 const CHORD_DICTIONARY = {
-    // Major chords
+    // Major chords - CAGED shapes
     'C': { type: 'major', intervals: [0, 4, 7], notes: ['C', 'E', 'G'], positions: [
-        { frets: [0, 1, 0, 2, 1, 0], root: 0 },
-        { frets: [3, 3, 5, 5, 5, 3], root: 0 },
-        { frets: [8, 10, 10, 9, 8, 8], root: 0 }
+        { frets: [-1, 3, 5, 5, 5, 3], root: 1 },  // C shape, root on 5th string
+        { frets: [8, 10, 10, 9, 8, 8], root: 0 }, // A shape transposed
+        { frets: [3, 3, 5, 5, 5, 3], root: 0 }   // E shape transposed
     ]},
     'C#': { type: 'major', intervals: [1, 5, 8], notes: ['C#', 'E#', 'G#'], positions: [
         { frets: [-1, 4, 6, 6, 6, -1], root: 1 },
@@ -17,9 +17,9 @@ const CHORD_DICTIONARY = {
         { frets: [9, 11, 11, 10, 9, 9], root: 0 }
     ]},
     'D': { type: 'major', intervals: [2, 6, 9], notes: ['D', 'F#', 'A'], positions: [
-        { frets: [2, 2, 0, 0, 0, 2], root: 0 },
-        { frets: [-1, -1, 0, 2, 3, 2], root: 2 },
-        { frets: [5, 5, 7, 7, 7, 5], root: 0 }
+        { frets: [-1, -1, 0, 2, 3, 2], root: 2 }, // D shape, root on 4th string
+        { frets: [10, 12, 12, 11, 10, 10], root: 0 }, // C shape transposed
+        { frets: [5, 7, 7, 7, 5, 5], root: 0 }   // A shape transposed
     ]},
     'D#': { type: 'major', intervals: [3, 7, 10], notes: ['D#', 'F##', 'A#'], positions: [
         { frets: [-1, 6, 8, 8, 8, -1], root: 1 },
@@ -32,14 +32,14 @@ const CHORD_DICTIONARY = {
         { frets: [11, 13, 13, 12, 11, 11], root: 0 }
     ]},
     'E': { type: 'major', intervals: [4, 8, 11], notes: ['E', 'G#', 'B'], positions: [
-        { frets: [0, 0, 1, 2, 2, 0], root: 0 },
-        { frets: [7, 7, 9, 9, 9, 7], root: 0 },
-        { frets: [12, 12, 13, 14, 14, 12], root: 0 }
+        { frets: [0, 2, 2, 1, 0, 0], root: 0 },   // E shape, root on 6th string
+        { frets: [12, 12, 14, 13, 12, 12], root: 0 }, // E shape octave
+        { frets: [7, 7, 9, 9, 9, 7], root: 0 }   // A shape transposed
     ]},
     'F': { type: 'major', intervals: [5, 9, 0], notes: ['F', 'A', 'C'], positions: [
-        { frets: [1, 3, 3, 2, 1, 1], root: 0 },
-        { frets: [-1, 8, 10, 10, 10, -1], root: 1 },
-        { frets: [8, 8, 10, 10, 10, 8], root: 0 }
+        { frets: [1, 3, 3, 2, 1, 1], root: 0 },   // E shape barred
+        { frets: [8, 10, 10, 9, 8, 8], root: 0 }, // E shape transposed
+        { frets: [-1, 8, 10, 10, 10, -1], root: 1 } // A shape transposed
     ]},
     'F#': { type: 'major', intervals: [6, 10, 1], notes: ['F#', 'A#', 'C#'], positions: [
         { frets: [2, 4, 4, 3, 2, 2], root: 0 },
@@ -52,9 +52,9 @@ const CHORD_DICTIONARY = {
         { frets: [9, 9, 11, 11, 11, 9], root: 0 }
     ]},
     'G': { type: 'major', intervals: [7, 11, 2], notes: ['G', 'B', 'D'], positions: [
-        { frets: [3, 0, 0, 0, 2, 3], root: 0 },
-        { frets: [-1, -1, 0, 0, 0, 3], root: 5 },
-        { frets: [10, 10, 12, 12, 12, 10], root: 0 }
+        { frets: [3, 2, 0, 0, 0, 3], root: 0 },   // G shape, root on 6th string
+        { frets: [10, 10, 12, 12, 12, 10], root: 0 }, // G shape octave
+        { frets: [-1, 3, 5, 5, 5, 3], root: 1 }  // C shape transposed
     ]},
     'G#': { type: 'major', intervals: [8, 0, 3], notes: ['G#', 'C', 'D#'], positions: [
         { frets: [4, 1, 1, 1, 3, 4], root: 0 },
@@ -65,9 +65,9 @@ const CHORD_DICTIONARY = {
         { frets: [-1, -1, 1, 1, 1, 4], root: 5 }
     ]},
     'A': { type: 'major', intervals: [9, 1, 4], notes: ['A', 'C#', 'E'], positions: [
-        { frets: [0, 0, 2, 2, 2, 0], root: 0 },
-        { frets: [5, 0, 0, 1, 0, -1], root: 0 },
-        { frets: [12, 12, 14, 14, 14, 12], root: 0 }
+        { frets: [-1, 0, 2, 2, 2, 0], root: 1 },  // A shape, root on 5th string
+        { frets: [5, 5, 7, 6, 5, 5], root: 0 },   // G shape transposed
+        { frets: [12, 12, 14, 14, 14, 12], root: 0 } // E shape transposed
     ]},
     'A#': { type: 'major', intervals: [10, 2, 5], notes: ['A#', 'D', 'F'], positions: [
         { frets: [1, 1, 3, 3, 3, 1], root: 0 },

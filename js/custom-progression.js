@@ -27,8 +27,8 @@ function addCustomChordToProgression(lockedChord) {
 
 // Initialize custom progression builder
 function initCustomProgression() {
-    const keySelect = document.getElementById('customProgressionKey');
-    const minorCheckbox = document.getElementById('customProgressionMinor');
+    const keyButtons = document.querySelectorAll('.control-btn[data-key]');
+    const minorToggle = document.getElementById('customProgressionMinorToggle');
     const chordInput = document.getElementById('chordNameInput');
     const romanInput = document.getElementById('romanNumeralInput');
     const addChordBtn = document.getElementById('addChordByName');
@@ -37,18 +37,28 @@ function initCustomProgression() {
     const playBtn = document.getElementById('playCustomProgression');
     const modeButtons = document.querySelectorAll('.mode-btn');
     
-    if (!keySelect || !minorCheckbox) return;
+    if (!keyButtons.length || !minorToggle) return;
     
-    // Key and mode changes
-    keySelect.addEventListener('change', (e) => {
-        customProgressionKey = e.target.value;
+    // Key changes
+    keyButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            keyButtons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            customProgressionKey = btn.dataset.key;
+            updateCustomProgressionDisplay();
+        });
+    });
+    
+    // Minor/major toggle
+    minorToggle.addEventListener('click', () => {
+        customProgressionMinor = !customProgressionMinor;
+        minorToggle.querySelector('span').textContent = customProgressionMinor ? 'Minor' : 'Major';
         updateCustomProgressionDisplay();
     });
     
-    minorCheckbox.addEventListener('change', (e) => {
-        customProgressionMinor = e.target.checked;
-        updateCustomProgressionDisplay();
-    });
+    // Set initial active button
+    const activeKey = Array.from(keyButtons).find(btn => btn.dataset.key === customProgressionKey);
+    if (activeKey) activeKey.classList.add('active');
     
     // Mode toggle
     modeButtons.forEach(btn => {

@@ -88,6 +88,9 @@ function initChordBuilder() {
     const extensionOptions = document.getElementById('extensionOptions');
     const clearBuilder = document.getElementById('clearBuilder');
     
+    // Exit early if builder tree doesn't exist (e.g., in Chord Library mode)
+    if (rootOptions.length === 0) return;
+    
     // Root selection
     rootOptions.forEach(btn => {
         btn.addEventListener('click', () => {

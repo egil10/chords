@@ -7,9 +7,10 @@ let currentFingering = [null, null, null, null, null, null]; // [-1 for muted, f
 // Export for use in other modules
 window.currentFingering = currentFingering;
 
-// Initialize the fretboard
-function initFretboard() {
-    const fretboard = document.getElementById('fretboard');
+// Create a fretboard element
+function createFretboardElement(containerId) {
+    const fretboard = document.getElementById(containerId);
+    if (!fretboard) return;
     fretboard.innerHTML = '';
 
     // Create fret numbers row
@@ -42,6 +43,8 @@ function initFretboard() {
         const label = document.createElement('div');
         label.className = 'string-label';
         label.textContent = STRINGS[i];
+        label.dataset.string = i;
+        label.addEventListener('click', handleStringLabelClick);
         
         const fretSegments = document.createElement('div');
         fretSegments.className = 'fret-segments';
@@ -53,12 +56,18 @@ function initFretboard() {
             segment.dataset.string = i; // Keep original string index for data
             segment.dataset.fret = j;
             
-            // Add note label
+            // Add note label (hidden when active)
             const noteLabel = document.createElement('div');
             noteLabel.className = 'fret-note-label';
             const note = getNoteAtPosition(i, j);
             noteLabel.textContent = note;
             segment.appendChild(noteLabel);
+            
+            // Add active note label (visible only when active)
+            const activeNoteLabel = document.createElement('div');
+            activeNoteLabel.className = 'fret-active-note-label';
+            activeNoteLabel.textContent = note;
+            segment.appendChild(activeNoteLabel);
             
             segment.addEventListener('click', handleSegmentClick);
             fretSegments.appendChild(segment);
@@ -67,6 +76,172 @@ function initFretboard() {
         stringDiv.appendChild(label);
         stringDiv.appendChild(fretSegments);
         fretboard.appendChild(stringDiv);
+    }
+}
+
+// Initialize the fretboard
+function initFretboard() {
+    createFretboardElement('fretboard');
+    createFretboardElement('selectedChordFretboard');
+    
+    // Set up clear buttons
+    const clearFretboardBtn = document.getElementById('clearFretboard');
+    const clearLibraryChordBtn = document.getElementById('clearLibraryChord');
+    
+    if (clearFretboardBtn) {
+        clearFretboardBtn.addEventListener('click', () => {
+            clearFretboard();
+        });
+    }
+    
+    if (clearLibraryChordBtn) {
+        clearLibraryChordBtn.addEventListener('click', () => {
+            clearLibraryChordSelection();
+        });
+    }
+    
+    // Set up fretboard controls
+    const btnTransposeDown = document.getElementById('btnTransposeDown');
+    const btnTransposeUp = document.getElementById('btnTransposeUp');
+    const btnToggleDisplay = document.getElementById('btnToggleDisplay');
+    
+    if (btnTransposeDown) {
+        btnTransposeDown.addEventListener('click', () => {
+            transposeChord(-1);
+        });
+    }
+    
+    if (btnTransposeUp) {
+        btnTransposeUp.addEventListener('click', () => {
+            transposeChord(1);
+        });
+    }
+    
+    if (btnToggleDisplay) {
+        btnToggleDisplay.addEventListener('click', () => {
+            toggleDisplayMode();
+        });
+    }
+    
+    // Set up inline transpose buttons
+    const btnTransposeDownInline = document.getElementById('btnTransposeDownInline');
+    const btnTransposeUpInline = document.getElementById('btnTransposeUpInline');
+    
+    if (btnTransposeDownInline) {
+        btnTransposeDownInline.addEventListener('click', () => {
+            transposeChord(-1);
+        });
+    }
+    
+    if (btnTransposeUpInline) {
+        btnTransposeUpInline.addEventListener('click', () => {
+            transposeChord(1);
+        });
+    }
+}
+
+// Transpose current chord up or down
+function transposeChord(semitones) {
+    // Check if we have any active frets
+    const hasActiveFret = window.currentFingering.some(f => f !== null && f > 0);
+    if (!hasActiveFret) return;
+    
+    // Transpose all frets
+    const newFingering = window.currentFingering.map(f => {
+        if (f === null || f === -1) return f;
+        if (f === 0) return 0; // Keep open strings as open
+        return Math.max(0, f + semitones); // Don't go below fret 0
+    });
+    
+    // Check if any fret exceeds max
+    const maxFret = 15;
+    if (newFingering.some(f => f !== null && f > maxFret)) {
+        return; // Don't transpose if it would exceed max fret
+    }
+    
+    window.currentFingering = newFingering;
+    updateFretboardDisplay();
+    findMatchingChords();
+    
+    // Update lock button visibility
+    if (typeof window.updateLockButtonVisibility === 'function') {
+        window.updateLockButtonVisibility();
+    }
+}
+
+// Toggle between showing notes and intervals
+let showNotesDisplay = true;
+
+function toggleDisplayMode() {
+    const btn = document.getElementById('btnToggleDisplay');
+    const notesDiv = document.getElementById('chordNotes');
+    const intervalsDiv = document.getElementById('chordIntervals');
+    
+    if (!btn || !notesDiv || !intervalsDiv) return;
+    
+    showNotesDisplay = !showNotesDisplay;
+    
+    if (showNotesDisplay) {
+        notesDiv.style.display = 'block';
+        intervalsDiv.style.display = 'none';
+        btn.querySelector('span').textContent = 'Notes';
+    } else {
+        notesDiv.style.display = 'none';
+        intervalsDiv.style.display = 'block';
+        btn.querySelector('span').textContent = 'Intervals';
+    }
+}
+
+// Clear library chord selection
+function clearLibraryChordSelection() {
+    const displayElement = document.getElementById('selectedChordDisplay');
+    const notesDiv = document.getElementById('selectedChordNotes');
+    const intervalsDiv = document.getElementById('selectedChordIntervals');
+    const clearBtn = document.getElementById('clearLibraryChord');
+    const grid = document.getElementById('allVoicingsGrid');
+    
+    if (displayElement) {
+        displayElement.textContent = 'Select a chord to see all voicings';
+    }
+    if (notesDiv) {
+        notesDiv.innerHTML = '';
+    }
+    if (intervalsDiv) {
+        intervalsDiv.innerHTML = '';
+    }
+    if (clearBtn) {
+        clearBtn.style.display = 'none';
+    }
+    if (grid) {
+        grid.innerHTML = '';
+    }
+    
+    // Clear the fretboard
+    displayChordOnSelectedFretboard([null, null, null, null, null, null]);
+}
+
+// Handle clicking on string labels to toggle mute
+function handleStringLabelClick(e) {
+    const string = parseInt(e.target.dataset.string);
+    
+    // Toggle mute state
+    if (window.currentFingering[string] === -1) {
+        window.currentFingering[string] = null;
+    } else {
+        window.currentFingering[string] = -1;
+    }
+    
+    updateFretboardDisplay();
+    findMatchingChords();
+    
+    // Clear manual note selection when using fretboard
+    if (typeof window.clearSelectedNotes === 'function') {
+        window.clearSelectedNotes();
+    }
+    
+    // Update lock button visibility
+    if (typeof window.updateLockButtonVisibility === 'function') {
+        window.updateLockButtonVisibility();
     }
 }
 
@@ -94,6 +269,11 @@ function handleSegmentClick(e) {
     updateFretboardDisplay();
     findMatchingChords();
     
+    // Clear manual note selection when using fretboard
+    if (typeof window.clearSelectedNotes === 'function') {
+        window.clearSelectedNotes();
+    }
+    
     // Update lock button visibility
     if (typeof window.updateLockButtonVisibility === 'function') {
         window.updateLockButtonVisibility();
@@ -104,6 +284,19 @@ function handleSegmentClick(e) {
 function updateFretboardDisplay() {
     const segments = document.querySelectorAll('.fret-segment');
     
+    // First pass: determine which strings have active frets
+    const hasActiveFret = {};
+    segments.forEach(segment => {
+        const string = parseInt(segment.dataset.string);
+        const fret = parseInt(segment.dataset.fret);
+        if (window.currentFingering[string] === fret) {
+            hasActiveFret[string] = true;
+        } else if (window.currentFingering[string] === -1) {
+            hasActiveFret[string] = true; // Also hide if muted
+        }
+    });
+    
+    // Second pass: update all segments
     segments.forEach(segment => {
         const string = parseInt(segment.dataset.string);
         const fret = parseInt(segment.dataset.fret);
@@ -115,6 +308,13 @@ function updateFretboardDisplay() {
         if (noteLabel) {
             const note = getNoteAtPosition(string, fret);
             noteLabel.textContent = note;
+            
+            // Hide note label if this string has an active fret and this segment is not active
+            if (hasActiveFret[string] && window.currentFingering[string] !== fret) {
+                segment.classList.add('hide-note-label');
+            } else {
+                segment.classList.remove('hide-note-label');
+            }
         }
         
         if (window.currentFingering[string] === fret) {
@@ -160,8 +360,42 @@ function findMatchingChords() {
         document.getElementById('currentChord').textContent = 'Click a chord to see it on the fretboard';
         document.getElementById('chordNotes').innerHTML = '<h4>Notes</h4><p>-</p>';
         document.getElementById('chordIntervals').innerHTML = '<h4>Intervals</h4><p>-</p>';
+        
+        // Hide controls when no chord is selected
+        const fretboardControls = document.getElementById('fretboardControls');
+        if (fretboardControls) {
+            fretboardControls.style.display = 'none';
+        }
+        
+        // Hide inline transpose buttons
+        const btnTransposeDownInline = document.getElementById('btnTransposeDownInline');
+        const btnTransposeUpInline = document.getElementById('btnTransposeUpInline');
+        if (btnTransposeDownInline) btnTransposeDownInline.style.display = 'none';
+        if (btnTransposeUpInline) btnTransposeUpInline.style.display = 'none';
+        
+        // Show all chords when nothing is selected
+        const chordItems = document.querySelectorAll('.chord-item');
+        chordItems.forEach(item => {
+            item.style.display = '';
+        });
+        const resultCount = document.querySelector('.chord-library h3');
+        if (resultCount) {
+            resultCount.textContent = 'Chord Library';
+        }
         return;
     }
+    
+    // Show controls when chord is selected
+    const fretboardControls = document.getElementById('fretboardControls');
+    if (fretboardControls) {
+        fretboardControls.style.display = 'flex';
+    }
+    
+    // Show inline transpose buttons
+    const btnTransposeDownInline = document.getElementById('btnTransposeDownInline');
+    const btnTransposeUpInline = document.getElementById('btnTransposeUpInline');
+    if (btnTransposeDownInline) btnTransposeDownInline.style.display = 'flex';
+    if (btnTransposeUpInline) btnTransposeUpInline.style.display = 'flex';
     
     // Try to match against chord dictionary
     const matches = [];
@@ -194,6 +428,35 @@ function findMatchingChords() {
     // Highlight matching chord in library
     highlightChordInLibrary(matches);
     
+    // Filter chord library to show only matching chords
+    if (matches.length > 0) {
+        const chordItems = document.querySelectorAll('.chord-item');
+        chordItems.forEach(item => {
+            if (matches.includes(item.dataset.chord)) {
+                item.style.display = '';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+        
+        // Update result count
+        const resultCount = document.querySelector('.chord-library h3');
+        if (resultCount) {
+            resultCount.textContent = `Chord Library (${matches.length} matches)`;
+        }
+    } else {
+        // Show all chords if no match
+        const chordItems = document.querySelectorAll('.chord-item');
+        chordItems.forEach(item => {
+            item.style.display = '';
+        });
+        
+        const resultCount = document.querySelector('.chord-library h3');
+        if (resultCount) {
+            resultCount.textContent = 'Chord Library';
+        }
+    }
+    
     // Update lock button visibility
     if (typeof window.updateLockButtonVisibility === 'function') {
         window.updateLockButtonVisibility();
@@ -204,7 +467,7 @@ function findMatchingChords() {
 function getActiveNotes() {
     const notes = [];
     for (let i = 0; i < window.currentFingering.length; i++) {
-        if (window.currentFingering[i] !== null) {
+        if (window.currentFingering[i] !== null && window.currentFingering[i] >= 0) {
             const note = getNoteAtPosition(i, window.currentFingering[i]);
             if (note && !notes.includes(note)) {
                 notes.push(note);
@@ -216,8 +479,9 @@ function getActiveNotes() {
 
 // Check if a chord matches the current fingering
 function chordMatchesFingering(chordName, chordData, activeNotes) {
-    // Check if all chord notes are present
-    const chordNoteSet = new Set(chordData.notes);
+    // Normalize chord notes to match our NOTE_NAMES format
+    const normalizedChordNotes = chordData.notes.map(note => normalizeNoteName(note));
+    const chordNoteSet = new Set(normalizedChordNotes);
     const activeNoteSet = new Set(activeNotes);
     
     // For now, we'll do a simple match - all chord notes must be present
@@ -497,4 +761,7 @@ window.clearFretboard = clearFretboard;
 window.getActiveNotes = getActiveNotes;
 window.createASCIIFretboard = createASCIIFretboard;
 window.getNoteAtPosition = getNoteAtPosition;
+window.updateFretboardDisplay = updateFretboardDisplay;
+window.displayChordOnSelectedFretboard = displayChordOnSelectedFretboard;
+window.generateTransposedVoicings = generateTransposedVoicings;
 

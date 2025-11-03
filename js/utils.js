@@ -18,11 +18,25 @@ function intervalName(semitones) {
 
 // Normalize note name (convert between sharp and flat)
 function normalizeNoteName(note) {
+    // First check if it's a standard note name
     const sharpIndex = NOTE_NAMES.indexOf(note);
     if (sharpIndex !== -1) return NOTE_NAMES[sharpIndex];
     
     const flatIndex = FLAT_NAMES.indexOf(note);
     if (flatIndex !== -1) return NOTE_NAMES[flatIndex];
+    
+    // Handle enharmonic equivalents (E# = F, F## = G, E## = F#, etc.)
+    const enharmonicMap = {
+        'E#': 'F', 'Fb': 'E',
+        'B#': 'C', 'Cb': 'B',
+        'F##': 'G', 'Gbb': 'F',
+        'E##': 'F#', 'Fbb': 'E',
+        'B##': 'C#', 'Cbb': 'Bb'
+    };
+    
+    if (enharmonicMap[note]) {
+        return enharmonicMap[note];
+    }
     
     return note;
 }

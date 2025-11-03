@@ -1,24 +1,59 @@
 // Progression UI functionality
-let currentProgressionRoot = 'E';
+let currentProgressionRoot = 'C';
 let isProgressionMinor = false;
 
 // Initialize progression UI
 function initProgressions() {
-    const progressionRoot = document.getElementById('progressionRoot');
-    const progressionMinor = document.getElementById('progressionMinor');
+    const noteButtons = document.querySelectorAll('.control-btn[data-note]');
+    const minorToggle = document.getElementById('progressionMinorToggle');
+    const clearBtn = document.getElementById('clearProgressionSelection');
     
-    if (!progressionRoot || !progressionMinor) return;
+    if (!noteButtons.length || !minorToggle) return;
     
-    // Update progressions when root or minor changes
-    progressionRoot.addEventListener('change', (e) => {
-        currentProgressionRoot = e.target.value;
+    // Update progressions when root changes
+    noteButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            // Update active state
+            noteButtons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            // Update root
+            currentProgressionRoot = btn.dataset.note;
+            window.currentProgressionRoot = currentProgressionRoot;
+            updateProgressions();
+        });
+    });
+    
+    // Toggle minor/major
+    minorToggle.addEventListener('click', () => {
+        isProgressionMinor = !isProgressionMinor;
+        window.isProgressionMinor = isProgressionMinor;
+        minorToggle.querySelector('span').textContent = isProgressionMinor ? 'Minor' : 'Major';
         updateProgressions();
     });
     
-    progressionMinor.addEventListener('change', (e) => {
-        isProgressionMinor = e.target.checked;
-        updateProgressions();
-    });
+    // Clear button
+    if (clearBtn) {
+        clearBtn.addEventListener('click', () => {
+            currentProgressionRoot = 'C';
+            isProgressionMinor = false;
+            window.currentProgressionRoot = currentProgressionRoot;
+            window.isProgressionMinor = isProgressionMinor;
+            
+            noteButtons.forEach(b => b.classList.remove('active'));
+            const defaultBtn = Array.from(noteButtons).find(btn => btn.dataset.note === 'C');
+            if (defaultBtn) defaultBtn.classList.add('active');
+            
+            minorToggle.querySelector('span').textContent = 'Major';
+            updateProgressions();
+        });
+    }
+    
+    // Set initial active button
+    const activeBtn = Array.from(noteButtons).find(btn => btn.dataset.note === currentProgressionRoot);
+    if (activeBtn) {
+        activeBtn.classList.add('active');
+    }
     
     // Initial load
     updateProgressions();
@@ -90,7 +125,7 @@ function createProgressionPattern(pattern, category) {
     
     const romanNumerals = document.createElement('div');
     romanNumerals.className = 'roman-numerals';
-    romanNumerals.textContent = chords.map(c => c.roman).join('–');
+    romanNumerals.style.display = 'none'; // Hide duplicate, already shown in pattern.name
     patternDiv.appendChild(romanNumerals);
     
     const chordsContainer = document.createElement('div');
@@ -135,4 +170,6 @@ function getCategoryTitle(category) {
 // Export functions
 window.initProgressions = initProgressions;
 window.updateProgressions = updateProgressions;
+window.currentProgressionRoot = currentProgressionRoot;
+window.isProgressionMinor = isProgressionMinor;
 

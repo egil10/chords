@@ -5,20 +5,53 @@ let currentScaleRoot = 'E';
 
 // Initialize scales UI
 function initScales() {
-    const scaleType = document.getElementById('scaleType');
-    const scaleRoot = document.getElementById('scaleRoot');
+    const scaleButtons = document.querySelectorAll('.control-btn[data-scale]');
+    const rootButtons = document.querySelectorAll('.control-btn[data-root]');
+    const clearBtn = document.getElementById('clearScaleSelection');
     
-    if (!scaleType || !scaleRoot) return;
+    if (!scaleButtons.length || !rootButtons.length) return;
     
-    scaleType.addEventListener('change', (e) => {
-        currentScaleType = e.target.value;
-        updateScales();
+    scaleButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            scaleButtons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentScaleType = btn.dataset.scale;
+            updateScales();
+        });
     });
     
-    scaleRoot.addEventListener('change', (e) => {
-        currentScaleRoot = e.target.value;
-        updateScales();
+    rootButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            rootButtons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentScaleRoot = btn.dataset.root;
+            updateScales();
+        });
     });
+    
+    // Clear button
+    if (clearBtn) {
+        clearBtn.addEventListener('click', () => {
+            currentScaleType = 'minor-pentatonic';
+            currentScaleRoot = 'E';
+            
+            scaleButtons.forEach(b => b.classList.remove('active'));
+            rootButtons.forEach(b => b.classList.remove('active'));
+            
+            const defaultScale = Array.from(scaleButtons).find(btn => btn.dataset.scale === 'minor-pentatonic');
+            const defaultRoot = Array.from(rootButtons).find(btn => btn.dataset.root === 'E');
+            if (defaultScale) defaultScale.classList.add('active');
+            if (defaultRoot) defaultRoot.classList.add('active');
+            
+            updateScales();
+        });
+    }
+    
+    // Set initial active buttons
+    const activeScale = Array.from(scaleButtons).find(btn => btn.dataset.scale === currentScaleType);
+    if (activeScale) activeScale.classList.add('active');
+    const activeRoot = Array.from(rootButtons).find(btn => btn.dataset.root === currentScaleRoot);
+    if (activeRoot) activeRoot.classList.add('active');
     
     // Initial load
     updateScales();

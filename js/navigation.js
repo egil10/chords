@@ -8,8 +8,11 @@ function setActiveSection(section) {
     });
     
     // Hide specific containers
-    const chordsSection = document.getElementById('chordsSection');
-    const chordsContentSection = document.getElementById('chordsContentSection');
+    const tonesMode = document.getElementById('tonesToChordsMode');
+    const tonesSection = document.getElementById('tonesToChordsSection');
+    const libraryMode = document.getElementById('chordLibraryMode');
+    const librarySection = document.getElementById('chordLibrarySection');
+    const chordModeToggle = document.getElementById('chordModeToggle');
     const progressionsSection = document.getElementById('progressionsSection');
     const scalesSection = document.getElementById('scalesSection');
     
@@ -20,36 +23,37 @@ function setActiveSection(section) {
     
     // Show selected section
     if (section === 'chords') {
-        // Show chords section
-        if (chordsSection) {
-            chordsSection.style.display = 'block';
+        // Show chord mode toggle
+        if (chordModeToggle) chordModeToggle.style.display = 'flex';
+        
+        // Show tones mode by default
+        if (tonesMode) tonesMode.style.display = 'block';
+        if (tonesSection) {
+            tonesSection.classList.add('active');
+            tonesSection.style.display = 'block';
         }
-        if (chordsContentSection) {
-            chordsContentSection.classList.add('active');
-            chordsContentSection.style.display = 'block';
-        }
+        
+        // Hide library mode
+        if (libraryMode) libraryMode.style.display = 'none';
+        if (librarySection) librarySection.style.display = 'none';
+        
         // Activate nav button
         const navBtn = document.querySelector('.nav-btn[data-section="chords"]');
         if (navBtn) navBtn.classList.add('active');
-        
-        // Reset chord search if needed
-        const searchInput = document.getElementById('chordSearch');
-        if (searchInput && searchInput.value) {
-            // Optionally clear search - comment out if you want to keep search
-            // searchInput.value = '';
-            // filterChords();
-        }
         
         // Scroll to top
         window.scrollTo({ top: 0, behavior: 'smooth' });
         
     } else if (section === 'progressions') {
-        // Hide chords
-        if (chordsSection) chordsSection.style.display = 'none';
-        if (chordsContentSection) {
-            chordsContentSection.classList.remove('active');
-            chordsContentSection.style.display = 'none';
+        // Hide chord modes
+        if (chordModeToggle) chordModeToggle.style.display = 'none';
+        if (tonesMode) tonesMode.style.display = 'none';
+        if (tonesSection) {
+            tonesSection.classList.remove('active');
+            tonesSection.style.display = 'none';
         }
+        if (libraryMode) libraryMode.style.display = 'none';
+        if (librarySection) librarySection.style.display = 'none';
         
         // Show progressions
         if (progressionsSection) {
@@ -80,12 +84,15 @@ function setActiveSection(section) {
         window.scrollTo({ top: 0, behavior: 'smooth' });
         
     } else if (section === 'scales') {
-        // Hide chords
-        if (chordsSection) chordsSection.style.display = 'none';
-        if (chordsContentSection) {
-            chordsContentSection.classList.remove('active');
-            chordsContentSection.style.display = 'none';
+        // Hide chord modes
+        if (chordModeToggle) chordModeToggle.style.display = 'none';
+        if (tonesMode) tonesMode.style.display = 'none';
+        if (tonesSection) {
+            tonesSection.classList.remove('active');
+            tonesSection.style.display = 'none';
         }
+        if (libraryMode) libraryMode.style.display = 'none';
+        if (librarySection) librarySection.style.display = 'none';
         
         // Hide progressions
         if (progressionsSection) {
@@ -115,12 +122,15 @@ function setActiveSection(section) {
         window.scrollTo({ top: 0, behavior: 'smooth' });
         
     } else if (section === 'builder') {
-        // Hide chords
-        if (chordsSection) chordsSection.style.display = 'none';
-        if (chordsContentSection) {
-            chordsContentSection.classList.remove('active');
-            chordsContentSection.style.display = 'none';
+        // Hide chord modes
+        if (chordModeToggle) chordModeToggle.style.display = 'none';
+        if (tonesMode) tonesMode.style.display = 'none';
+        if (tonesSection) {
+            tonesSection.classList.remove('active');
+            tonesSection.style.display = 'none';
         }
+        if (libraryMode) libraryMode.style.display = 'none';
+        if (librarySection) librarySection.style.display = 'none';
         
         // Show progressions (which contains builder)
         if (progressionsSection) {
@@ -161,12 +171,45 @@ function setActiveSection(section) {
 function initNavigation() {
     const navButtons = document.querySelectorAll('.nav-btn');
     const refreshLogo = document.getElementById('refreshLogo');
+    const modeToggleBtns = document.querySelectorAll('.mode-toggle-btn');
     
     // Navigation button clicks
     navButtons.forEach(btn => {
         btn.addEventListener('click', () => {
             const section = btn.dataset.section;
             setActiveSection(section);
+        });
+    });
+    
+    // Chord mode toggle
+    modeToggleBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            modeToggleBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            const mode = btn.dataset.mode;
+            const tonesMode = document.getElementById('tonesToChordsMode');
+            const tonesSection = document.getElementById('tonesToChordsSection');
+            const libraryMode = document.getElementById('chordLibraryMode');
+            const librarySection = document.getElementById('chordLibrarySection');
+            
+            if (mode === 'tones') {
+                if (tonesMode) tonesMode.style.display = 'block';
+                if (tonesSection) {
+                    tonesSection.classList.add('active');
+                    tonesSection.style.display = 'block';
+                }
+                if (libraryMode) libraryMode.style.display = 'none';
+                if (librarySection) librarySection.style.display = 'none';
+            } else {
+                if (tonesMode) tonesMode.style.display = 'none';
+                if (tonesSection) tonesSection.style.display = 'none';
+                if (libraryMode) libraryMode.style.display = 'block';
+                if (librarySection) {
+                    librarySection.classList.add('active');
+                    librarySection.style.display = 'block';
+                }
+            }
         });
     });
     

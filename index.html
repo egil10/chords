@@ -47,39 +47,47 @@
                 <div class="scales-header">
                     <h3>Scale Maps & Soloing</h3>
                     <div class="scale-controls">
-                        <label for="scaleType">Scale:</label>
-                        <select id="scaleType">
-                            <option value="major">Major (Ionian)</option>
-                            <option value="minor">Natural Minor (Aeolian)</option>
-                            <option value="major-pentatonic">Major Pentatonic</option>
-                            <option value="minor-pentatonic" selected>Minor Pentatonic</option>
-                            <option value="blues">Blues Scale</option>
-                            <option value="mixolydian">Mixolydian</option>
-                            <option value="dorian">Dorian</option>
-                            <option value="lydian">Lydian</option>
-                            <option value="harmonic-minor">Harmonic Minor</option>
-                            <option value="bebop-major">Bebop Major</option>
-                        </select>
-                        <label for="scaleRoot">Root:</label>
-                        <select id="scaleRoot">
-                            <option value="C">C</option>
-                            <option value="C#">C#</option>
-                            <option value="Db">Db</option>
-                            <option value="D">D</option>
-                            <option value="D#">D#</option>
-                            <option value="Eb">Eb</option>
-                            <option value="E" selected>E</option>
-                            <option value="F">F</option>
-                            <option value="F#">F#</option>
-                            <option value="Gb">Gb</option>
-                            <option value="G">G</option>
-                            <option value="G#">G#</option>
-                            <option value="Ab">Ab</option>
-                            <option value="A">A</option>
-                            <option value="A#">A#</option>
-                            <option value="Bb">Bb</option>
-                            <option value="B">B</option>
-                        </select>
+                        <div class="control-group">
+                            <label>Scale:</label>
+                            <div class="button-group">
+                                <button class="control-btn active" data-scale="minor-pentatonic">Min Pent</button>
+                                <button class="control-btn" data-scale="major-pentatonic">Maj Pent</button>
+                                <button class="control-btn" data-scale="blues">Blues</button>
+                                <button class="control-btn" data-scale="major">Major</button>
+                                <button class="control-btn" data-scale="minor">Minor</button>
+                                <button class="control-btn" data-scale="dorian">Dorian</button>
+                                <button class="control-btn" data-scale="mixolydian">Mixolydian</button>
+                                <button class="control-btn" data-scale="harmonic-minor">Harm Minor</button>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label>Root:</label>
+                            <div class="button-group">
+                                <button class="control-btn" data-root="C">C</button>
+                                <button class="control-btn" data-root="C#">C#</button>
+                                <button class="control-btn" data-root="Db">Db</button>
+                                <button class="control-btn" data-root="D">D</button>
+                                <button class="control-btn" data-root="D#">D#</button>
+                                <button class="control-btn" data-root="Eb">Eb</button>
+                                <button class="control-btn active" data-root="E">E</button>
+                                <button class="control-btn" data-root="F">F</button>
+                                <button class="control-btn" data-root="F#">F#</button>
+                                <button class="control-btn" data-root="Gb">Gb</button>
+                                <button class="control-btn" data-root="G">G</button>
+                                <button class="control-btn" data-root="G#">G#</button>
+                                <button class="control-btn" data-root="Ab">Ab</button>
+                                <button class="control-btn" data-root="A">A</button>
+                                <button class="control-btn" data-root="A#">A#</button>
+                                <button class="control-btn" data-root="Bb">Bb</button>
+                                <button class="control-btn" data-root="B">B</button>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <button id="clearScaleSelection" class="btn-clear">
+                                <i data-lucide="x"></i>
+                                <span>Clear</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
                 <div id="scalePositions" class="scale-positions">
@@ -93,50 +101,14 @@
                 </div>
             </div>
             
-            <div class="controls" id="chordsSection">
-                <div class="search-container">
-                    <i data-lucide="search"></i>
-                    <input type="text" id="chordSearch" placeholder="Search chords (type instantly)..." autocomplete="off" spellcheck="false">
-                    <button id="clearSearch" class="btn-clear">
-                        <i data-lucide="x"></i>
-                    </button>
-                </div>
-                
-                <div class="chord-builder-tree" id="chordBuilderTree">
-                    <div id="builderSelectionDisplay" class="builder-selection-display"></div>
-                    <div class="builder-step">
-                        <label>Root Note:</label>
-                        <div class="builder-options" id="rootOptions">
-                            <button class="builder-opt" data-root="C">C</button>
-                            <button class="builder-opt" data-root="C#">C#</button>
-                            <button class="builder-opt" data-root="Db">Db</button>
-                            <button class="builder-opt" data-root="D">D</button>
-                            <button class="builder-opt" data-root="D#">D#</button>
-                            <button class="builder-opt" data-root="Eb">Eb</button>
-                            <button class="builder-opt" data-root="E">E</button>
-                            <button class="builder-opt" data-root="F">F</button>
-                            <button class="builder-opt" data-root="F#">F#</button>
-                            <button class="builder-opt" data-root="Gb">Gb</button>
-                            <button class="builder-opt" data-root="G">G</button>
-                            <button class="builder-opt" data-root="G#">G#</button>
-                            <button class="builder-opt" data-root="Ab">Ab</button>
-                            <button class="builder-opt" data-root="A">A</button>
-                            <button class="builder-opt" data-root="A#">A#</button>
-                            <button class="builder-opt" data-root="Bb">Bb</button>
-                            <button class="builder-opt" data-root="B">B</button>
-                        </div>
-                    </div>
-                    <div class="builder-step" id="qualityStep" style="display: none;">
-                        <label>Quality:</label>
-                        <div class="builder-options" id="qualityOptions"></div>
-                    </div>
-                    <div class="builder-step" id="extensionStep" style="display: none;">
-                        <label>Extension:</label>
-                        <div class="builder-options" id="extensionOptions"></div>
-                    </div>
-                    <button id="clearBuilder" class="btn-clear-small" style="display: none;">Clear</button>
-                </div>
+            <!-- Chord Mode Toggle -->
+            <div class="chord-mode-toggle" id="chordModeToggle">
+                <button class="mode-toggle-btn active" data-mode="tones">Tones → Chords</button>
+                <button class="mode-toggle-btn" data-mode="library">Chord Library</button>
+            </div>
 
+            <!-- TONES TO CHORDS MODE -->
+            <div class="controls" id="tonesToChordsMode">
                 <div class="filters">
                     <div class="note-selector">
                         <label class="filter-label">Select Notes:</label>
@@ -147,29 +119,32 @@
                             <i data-lucide="x"></i>
                         </button>
                     </div>
+                </div>
+            </div>
 
-                    <select id="chordTypeFilter">
-                        <option value="">All Types</option>
-                        <option value="major">Major</option>
-                        <option value="minor">Minor</option>
-                        <option value="dim">Diminished</option>
-                        <option value="aug">Augmented</option>
-                        <option value="7">Dominant 7th</option>
-                        <option value="maj7">Major 7th</option>
-                        <option value="m7">Minor 7th</option>
-                        <option value="dim7">Diminished 7th</option>
-                        <option value="aug7">Augmented 7th</option>
-                        <option value="sus2">Sus2</option>
-                        <option value="sus4">Sus4</option>
-                        <option value="add9">Add9</option>
-                        <option value="6">6th</option>
-                        <option value="m6">Minor 6th</option>
-                        <option value="9">9th</option>
-                        <option value="11">11th</option>
-                        <option value="13">13th</option>
-                        <option value="other">Other</option>
-                    </select>
+            <!-- CHORD LIBRARY MODE -->
+            <div class="controls" id="chordLibraryMode" style="display: none;">
+                <div class="search-container">
+                    <i data-lucide="search"></i>
+                    <input type="text" id="chordSearch" placeholder="Search chords..." autocomplete="off" spellcheck="false">
+                    <button id="clearSearch" class="btn-clear">
+                        <i data-lucide="x"></i>
+                    </button>
+                </div>
 
+                <div class="filters">
+                    <div class="filter-buttons">
+                        <button class="filter-btn active" data-type="">All</button>
+                        <button class="filter-btn" data-type="major">Major</button>
+                        <button class="filter-btn" data-type="minor">Minor</button>
+                        <button class="filter-btn" data-type="7">7th</button>
+                        <button class="filter-btn" data-type="maj7">Maj7</button>
+                        <button class="filter-btn" data-type="m7">m7</button>
+                        <button class="filter-btn" data-type="dim">Dim</button>
+                        <button class="filter-btn" data-type="aug">Aug</button>
+                        <button class="filter-btn" data-type="sus2">Sus2</button>
+                        <button class="filter-btn" data-type="sus4">Sus4</button>
+                    </div>
                 </div>
             </div>
 
@@ -177,70 +152,75 @@
                 <div class="progression-header">
                     <h3>Chord Progressions</h3>
                     <div class="progression-controls">
-                        <label for="progressionRoot">Starting Chord:</label>
-                        <select id="progressionRoot">
-                            <option value="C">C</option>
-                            <option value="C#">C#</option>
-                            <option value="Db">Db</option>
-                            <option value="D">D</option>
-                            <option value="D#">D#</option>
-                            <option value="Eb">Eb</option>
-                            <option value="E" selected>E</option>
-                            <option value="F">F</option>
-                            <option value="F#">F#</option>
-                            <option value="Gb">Gb</option>
-                            <option value="G">G</option>
-                            <option value="G#">G#</option>
-                            <option value="Ab">Ab</option>
-                            <option value="A">A</option>
-                            <option value="A#">A#</option>
-                            <option value="Bb">Bb</option>
-                            <option value="B">B</option>
-                        </select>
-                        <label class="checkbox-label">
-                            <input type="checkbox" id="progressionMinor">
-                            <span>Minor Key</span>
-                        </label>
+                        <div class="control-group">
+                            <label>Key:</label>
+                            <div class="button-group">
+                                <button class="control-btn active" data-note="C">C</button>
+                                <button class="control-btn" data-note="C#">C#</button>
+                                <button class="control-btn" data-note="Db">Db</button>
+                                <button class="control-btn" data-note="D">D</button>
+                                <button class="control-btn" data-note="D#">D#</button>
+                                <button class="control-btn" data-note="Eb">Eb</button>
+                                <button class="control-btn" data-note="E">E</button>
+                                <button class="control-btn" data-note="F">F</button>
+                                <button class="control-btn" data-note="F#">F#</button>
+                                <button class="control-btn" data-note="Gb">Gb</button>
+                                <button class="control-btn" data-note="G">G</button>
+                                <button class="control-btn" data-note="G#">G#</button>
+                                <button class="control-btn" data-note="Ab">Ab</button>
+                                <button class="control-btn" data-note="A">A</button>
+                                <button class="control-btn" data-note="A#">A#</button>
+                                <button class="control-btn" data-note="Bb">Bb</button>
+                                <button class="control-btn" data-note="B">B</button>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <button class="control-toggle-btn" id="progressionMinorToggle">
+                                <span>Major</span>
+                            </button>
+                        </div>
+                        <div class="control-group">
+                            <button id="clearProgressionSelection" class="btn-clear">
+                                <i data-lucide="x"></i>
+                                <span>Clear</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
                 <div id="progressionsList" class="progressions-list">
                     <!-- Dynamic progressions -->
                 </div>
                 
-                <div class="custom-chords-section" style="margin-top: 2rem;">
-                    <h3>Your Locked Chords</h3>
-                    <div id="lockedChordsList" class="locked-chords-list">
-                        <!-- Dynamic locked chords -->
-                    </div>
-                </div>
-                
                 <div class="custom-progression-section">
                     <h3>Custom Progression Builder</h3>
                     <div class="custom-progression-controls">
-                        <label for="customProgressionKey">Key:</label>
-                        <select id="customProgressionKey">
-                            <option value="C">C</option>
-                            <option value="C#">C#</option>
-                            <option value="Db">Db</option>
-                            <option value="D">D</option>
-                            <option value="D#">D#</option>
-                            <option value="Eb">Eb</option>
-                            <option value="E" selected>E</option>
-                            <option value="F">F</option>
-                            <option value="F#">F#</option>
-                            <option value="Gb">Gb</option>
-                            <option value="G">G</option>
-                            <option value="G#">G#</option>
-                            <option value="Ab">Ab</option>
-                            <option value="A">A</option>
-                            <option value="A#">A#</option>
-                            <option value="Bb">Bb</option>
-                            <option value="B">B</option>
-                        </select>
-                        <label class="checkbox-label">
-                            <input type="checkbox" id="customProgressionMinor">
-                            <span>Minor Key</span>
-                        </label>
+                        <div class="control-group">
+                            <label>Key:</label>
+                            <div class="button-group">
+                                <button class="control-btn" data-key="C">C</button>
+                                <button class="control-btn" data-key="C#">C#</button>
+                                <button class="control-btn" data-key="Db">Db</button>
+                                <button class="control-btn" data-key="D">D</button>
+                                <button class="control-btn" data-key="D#">D#</button>
+                                <button class="control-btn" data-key="Eb">Eb</button>
+                                <button class="control-btn active" data-key="E">E</button>
+                                <button class="control-btn" data-key="F">F</button>
+                                <button class="control-btn" data-key="F#">F#</button>
+                                <button class="control-btn" data-key="Gb">Gb</button>
+                                <button class="control-btn" data-key="G">G</button>
+                                <button class="control-btn" data-key="G#">G#</button>
+                                <button class="control-btn" data-key="Ab">Ab</button>
+                                <button class="control-btn" data-key="A">A</button>
+                                <button class="control-btn" data-key="A#">A#</button>
+                                <button class="control-btn" data-key="Bb">Bb</button>
+                                <button class="control-btn" data-key="B">B</button>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <button class="control-toggle-btn" id="customProgressionMinorToggle">
+                                <span>Major</span>
+                            </button>
+                        </div>
                     </div>
                     
                     <div class="custom-progression-input">
@@ -275,36 +255,93 @@
                         <button id="playCustomProgression" class="btn-play">Show Full Progression</button>
                     </div>
                 </div>
+                
+                <div class="custom-chords-section" style="margin-top: 2rem;">
+                    <h3>Your Locked Chords</h3>
+                    <div id="lockedChordsList" class="locked-chords-list">
+                        <!-- Dynamic locked chords -->
+                    </div>
+                </div>
             </div>
 
-            <div class="content section-content" id="chordsContentSection">
+            <!-- TONES TO CHORDS CONTENT -->
+            <div class="content section-content tones-mode active" id="tonesToChordsSection">
                 <div class="fretboard-container">
-                    <h2 id="currentChord">Click a chord to see it on the fretboard</h2>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <button id="btnTransposeDownInline" class="btn-transpose-inline" title="Transpose down one semitone" style="display: none;">
+                                <i data-lucide="chevron-left"></i>
+                            </button>
+                            <h2 id="currentChord" style="margin: 0;">Click frets to place notes</h2>
+                            <button id="btnTransposeUpInline" class="btn-transpose-inline" title="Transpose up one semitone" style="display: none;">
+                                <i data-lucide="chevron-right"></i>
+                            </button>
+                        </div>
+                        <button id="clearFretboard" class="btn-clear" title="Clear all notes from fretboard">
+                            <i data-lucide="x"></i>
+                            <span>Clear Fretboard</span>
+                        </button>
+                    </div>
                     <div id="fretboard" class="fretboard">
                         <!-- Dynamic fretboard -->
                     </div>
                     <div class="chord-info">
                         <div id="chordNotes"></div>
                         <div id="chordIntervals"></div>
-                        <div id="lockChordSection" class="lock-chord-section" style="display: none;">
-                            <button id="lockChordBtn" class="btn-lock-chord">
-                                <i data-lucide="lock"></i>
-                                <span>Lock This Chord</span>
-                            </button>
-                        </div>
                     </div>
-                    <div id="voicingsContainer" class="voicings-container">
-                        <h3>All Voicings</h3>
-                        <div id="voicingsList" class="voicings-list">
-                            <!-- Dynamic voicings -->
-                        </div>
+                    <div class="fretboard-controls" id="fretboardControls" style="display: none;">
+                        <button id="btnTransposeDown" class="control-btn-small" title="Transpose down one semitone">
+                            <i data-lucide="minus"></i>
+                            <span>Lower</span>
+                        </button>
+                        <button id="btnTransposeUp" class="control-btn-small" title="Transpose up one semitone">
+                            <i data-lucide="plus"></i>
+                            <span>Higher</span>
+                        </button>
+                        <button id="btnToggleDisplay" class="control-btn-small" title="Toggle between notes and intervals">
+                            <i data-lucide="music"></i>
+                            <span>Notes</span>
+                        </button>
                     </div>
-                    
                 </div>
 
                 <div class="chord-library">
-                    <h3>Chord Library</h3>
+                    <h3>Matching Chords</h3>
                     <div id="chordGrid" class="chord-grid">
+                        <!-- Dynamic chord grid -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- CHORD LIBRARY CONTENT -->
+            <div class="content section-content library-mode" id="chordLibrarySection" style="display: none;">
+                <div class="library-fretboard-view">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                        <h2 id="selectedChordDisplay" style="margin: 0;">Select a chord to see all voicings</h2>
+                        <button id="clearLibraryChord" class="btn-clear" title="Clear selected chord" style="display: none;">
+                            <i data-lucide="x"></i>
+                            <span>Clear</span>
+                        </button>
+                    </div>
+                    <div id="selectedChordFretboard" class="fretboard">
+                        <!-- Main fretboard for selected chord -->
+                    </div>
+                    <div class="chord-info">
+                        <div id="selectedChordNotes"></div>
+                        <div id="selectedChordIntervals"></div>
+                    </div>
+                </div>
+
+                <div class="all-voicings-container">
+                    <h3>All Voicings</h3>
+                    <div id="allVoicingsGrid" class="all-voicings-grid">
+                        <!-- All voicings displayed as mini fretboards -->
+                    </div>
+                </div>
+
+                <div class="chord-library-grid">
+                    <h3>Chord Library</h3>
+                    <div id="libraryChordGrid" class="chord-grid">
                         <!-- Dynamic chord grid -->
                     </div>
                 </div>
