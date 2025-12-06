@@ -3,390 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Interactive guitar chord finder with all chord voicings">
-    <title>Guitar Chord Finder</title>
+    <meta name="description" content="Simple interactive guitar chord finder">
+    <title>Chord Finder</title>
     <link rel="stylesheet" href="styles/main.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
-    <div class="container">
+    <div class="app-container">
         <header>
-            <div class="header-content">
-                <div class="logo" id="refreshLogo" title="Click to refresh">
-                    <i data-lucide="guitar"></i>
-                    <h1>Chord Finder</h1>
-                </div>
-                <button id="themeToggle" class="theme-toggle" title="Toggle dark mode">
-                    <i data-lucide="sun" id="themeIcon"></i>
-                </button>
-            </div>
-            <nav class="main-nav">
-                <button class="nav-btn active" data-section="chords">
-                    <i data-lucide="guitar"></i>
-                    <span>Chords</span>
-                </button>
-                <button class="nav-btn" data-section="progressions">
-                    <i data-lucide="music"></i>
-                    <span>Progressions</span>
-                </button>
-                <button class="nav-btn" data-section="scales">
-                    <i data-lucide="trending-up"></i>
-                    <span>Scales</span>
-                </button>
-                <button class="nav-btn" data-section="builder">
-                    <i data-lucide="settings"></i>
-                    <span>Builder</span>
-                </button>
-            </nav>
+            <h1>Chord Finder</h1>
+            <button id="themeToggle" class="theme-switch" type="button" role="switch" aria-label="Switch theme" aria-checked="false">
+                <span class="check">
+                    <span class="icon">
+                        <i data-lucide="sun" class="sun-icon"></i>
+                        <i data-lucide="moon" class="moon-icon"></i>
+                    </span>
+                </span>
+            </button>
         </header>
 
         <main>
-            <!-- Scales section (standalone) -->
-            <div id="scalesSection" class="scales-section section-content" style="display: none;">
-                <div class="scales-header">
-                    <h3>Scale Maps & Soloing</h3>
-                    <div class="scale-controls">
-                        <div class="control-group">
-                            <label>Scale:</label>
-                            <div class="button-group">
-                                <button class="control-btn active" data-scale="minor-pentatonic">Min Pent</button>
-                                <button class="control-btn" data-scale="major-pentatonic">Maj Pent</button>
-                                <button class="control-btn" data-scale="blues">Blues</button>
-                                <button class="control-btn" data-scale="major">Major</button>
-                                <button class="control-btn" data-scale="minor">Minor</button>
-                                <button class="control-btn" data-scale="dorian">Dorian</button>
-                                <button class="control-btn" data-scale="mixolydian">Mixolydian</button>
-                                <button class="control-btn" data-scale="harmonic-minor">Harm Minor</button>
-                            </div>
-                        </div>
-                        <div class="control-group">
-                            <label>Root:</label>
-                            <div class="button-group">
-                                <button class="control-btn" data-root="C">C</button>
-                                <button class="control-btn" data-root="C#">C#</button>
-                                <button class="control-btn" data-root="Db">Db</button>
-                                <button class="control-btn" data-root="D">D</button>
-                                <button class="control-btn" data-root="D#">D#</button>
-                                <button class="control-btn" data-root="Eb">Eb</button>
-                                <button class="control-btn active" data-root="E">E</button>
-                                <button class="control-btn" data-root="F">F</button>
-                                <button class="control-btn" data-root="F#">F#</button>
-                                <button class="control-btn" data-root="Gb">Gb</button>
-                                <button class="control-btn" data-root="G">G</button>
-                                <button class="control-btn" data-root="G#">G#</button>
-                                <button class="control-btn" data-root="Ab">Ab</button>
-                                <button class="control-btn" data-root="A">A</button>
-                                <button class="control-btn" data-root="A#">A#</button>
-                                <button class="control-btn" data-root="Bb">Bb</button>
-                                <button class="control-btn" data-root="B">B</button>
-                            </div>
-                        </div>
-                        <div class="control-group">
-                            <button id="clearScaleSelection" class="btn-clear">
-                                <i data-lucide="x"></i>
-                                <span>Clear</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <div id="scalePositions" class="scale-positions">
-                    <!-- Dynamic scale positions -->
-                </div>
-                <div id="cagedSection" class="caged-section">
-                    <h4>CAGED System</h4>
-                    <div id="cagedShapes" class="caged-shapes">
-                        <!-- Dynamic CAGED shapes -->
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Chord Mode Toggle -->
-            <div class="chord-mode-toggle" id="chordModeToggle">
-                <button class="mode-toggle-btn active" data-mode="tones">Tones → Chords</button>
-                <button class="mode-toggle-btn" data-mode="library">Chord Library</button>
-            </div>
-
-            <!-- TONES TO CHORDS MODE -->
-            <div class="controls" id="tonesToChordsMode">
-                <div class="filters">
-                    <div class="note-selector">
-                        <label class="filter-label">Select Notes:</label>
-                        <div id="noteSelector" class="note-buttons">
-                            <!-- Dynamic note buttons -->
-                        </div>
-                        <button id="clearNotes" class="btn-clear-small" title="Clear selected notes">
-                            <i data-lucide="x"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- CHORD LIBRARY MODE -->
-            <div class="controls" id="chordLibraryMode" style="display: none;">
-                <div class="filters">
-                    <div class="note-selector">
-                        <label class="filter-label">Root Note:</label>
-                        <div id="libraryNoteSelector" class="note-buttons">
-                            <!-- Dynamic note buttons -->
-                        </div>
-                        <button id="clearLibraryNotes" class="btn-clear-small" title="Clear selected notes">
-                            <i data-lucide="x"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="search-container">
-                    <i data-lucide="search"></i>
-                    <input type="text" id="chordSearch" placeholder="Search chords..." autocomplete="off" spellcheck="false">
-                    <button id="clearSearch" class="btn-clear">
-                        <i data-lucide="x"></i>
+            <div class="fretboard-container">
+                <div class="fretboard-header">
+                    <h2>Fretboard</h2>
+                    <button id="resetFretboard" class="reset-button" aria-label="Reset fretboard">
+                        <i data-lucide="rotate-ccw"></i>
+                        <span>Reset</span>
                     </button>
                 </div>
-
-                <div class="filters">
-                    <div class="filter-buttons">
-                        <button class="filter-btn active" data-type="">All</button>
-                        <button class="filter-btn" data-type="major">Major</button>
-                        <button class="filter-btn" data-type="minor">Minor</button>
-                        <button class="filter-btn" data-type="7">7th</button>
-                        <button class="filter-btn" data-type="maj7">Maj7</button>
-                        <button class="filter-btn" data-type="m7">m7</button>
-                        <button class="filter-btn" data-type="dim">Dim</button>
-                        <button class="filter-btn" data-type="aug">Aug</button>
-                        <button class="filter-btn" data-type="sus2">Sus2</button>
-                        <button class="filter-btn" data-type="sus4">Sus4</button>
-                    </div>
+                <div id="fretboard" class="fretboard">
+                    <!-- Will be generated by JavaScript -->
+                </div>
+                <div class="fret-numbers" id="fretNumbers">
+                    <!-- Will be generated by JavaScript -->
                 </div>
             </div>
 
-            <div id="progressionsSection" class="progressions-section section-content" style="display: none;">
-                <div class="progression-header">
-                    <h3>Chord Progressions</h3>
-                    <div class="progression-controls">
-                        <div class="control-group">
-                            <label>Key:</label>
-                            <div class="button-group">
-                                <button class="control-btn active" data-note="C">C</button>
-                                <button class="control-btn" data-note="C#">C#</button>
-                                <button class="control-btn" data-note="Db">Db</button>
-                                <button class="control-btn" data-note="D">D</button>
-                                <button class="control-btn" data-note="D#">D#</button>
-                                <button class="control-btn" data-note="Eb">Eb</button>
-                                <button class="control-btn" data-note="E">E</button>
-                                <button class="control-btn" data-note="F">F</button>
-                                <button class="control-btn" data-note="F#">F#</button>
-                                <button class="control-btn" data-note="Gb">Gb</button>
-                                <button class="control-btn" data-note="G">G</button>
-                                <button class="control-btn" data-note="G#">G#</button>
-                                <button class="control-btn" data-note="Ab">Ab</button>
-                                <button class="control-btn" data-note="A">A</button>
-                                <button class="control-btn" data-note="A#">A#</button>
-                                <button class="control-btn" data-note="Bb">Bb</button>
-                                <button class="control-btn" data-note="B">B</button>
-                            </div>
-                        </div>
-                        <div class="control-group">
-                            <button class="control-toggle-btn" id="progressionMinorToggle">
-                                <span>Major</span>
-                            </button>
-                        </div>
-                        <div class="control-group">
-                            <button id="clearProgressionSelection" class="btn-clear">
-                                <i data-lucide="x"></i>
-                                <span>Clear</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <div id="progressionsList" class="progressions-list">
-                    <!-- Dynamic progressions -->
-                </div>
-                
-                <div class="custom-progression-section">
-                    <h3>Custom Progression Builder</h3>
-                    <div class="custom-progression-controls">
-                        <div class="control-group">
-                            <label>Key:</label>
-                            <div class="button-group">
-                                <button class="control-btn" data-key="C">C</button>
-                                <button class="control-btn" data-key="C#">C#</button>
-                                <button class="control-btn" data-key="Db">Db</button>
-                                <button class="control-btn" data-key="D">D</button>
-                                <button class="control-btn" data-key="D#">D#</button>
-                                <button class="control-btn" data-key="Eb">Eb</button>
-                                <button class="control-btn active" data-key="E">E</button>
-                                <button class="control-btn" data-key="F">F</button>
-                                <button class="control-btn" data-key="F#">F#</button>
-                                <button class="control-btn" data-key="Gb">Gb</button>
-                                <button class="control-btn" data-key="G">G</button>
-                                <button class="control-btn" data-key="G#">G#</button>
-                                <button class="control-btn" data-key="Ab">Ab</button>
-                                <button class="control-btn" data-key="A">A</button>
-                                <button class="control-btn" data-key="A#">A#</button>
-                                <button class="control-btn" data-key="Bb">Bb</button>
-                                <button class="control-btn" data-key="B">B</button>
-                            </div>
-                        </div>
-                        <div class="control-group">
-                            <button class="control-toggle-btn" id="customProgressionMinorToggle">
-                                <span>Major</span>
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <div class="custom-progression-input">
-                        <div class="input-mode-toggle">
-                            <button class="mode-btn active" data-mode="chords">Add by Chord Name</button>
-                            <button class="mode-btn" data-mode="roman">Add by Roman Numeral</button>
-                        </div>
-                        
-                        <div id="chordInputMode" class="input-mode">
-                            <input type="text" id="chordNameInput" placeholder="e.g., C, Am, Fmaj7, G7" />
-                            <button id="addChordByName" class="btn-add">Add Chord</button>
-                        </div>
-                        
-                        <div id="romanInputMode" class="input-mode" style="display: none;">
-                            <input type="text" id="romanNumeralInput" placeholder="e.g., I, ii, V, ♭VII" />
-                            <button id="addChordByRoman" class="btn-add">Add Roman Numeral</button>
-                        </div>
-                    </div>
-                    
-                    <div id="customProgressionDisplay" class="custom-progression-display">
-                        <div class="progression-header-row">
-                            <div class="progression-chords-row">
-                                <span class="progression-label">Chords:</span>
-                                <div id="customProgressionChords" class="progression-chords-list"></div>
-                            </div>
-                            <div class="progression-roman-row">
-                                <span class="progression-label">Roman Numerals:</span>
-                                <div id="customProgressionRoman" class="roman-numerals-list"></div>
-                            </div>
-                        </div>
-                        <button id="clearCustomProgression" class="btn-clear">Clear Progression</button>
-                        <button id="playCustomProgression" class="btn-play">Show Full Progression</button>
-                    </div>
-                </div>
-                
-                <div class="custom-chords-section" style="margin-top: 2rem;">
-                    <h3>Your Locked Chords</h3>
-                    <div id="lockedChordsList" class="locked-chords-list">
-                        <!-- Dynamic locked chords -->
-                    </div>
-                </div>
-            </div>
-
-            <!-- TONES TO CHORDS CONTENT -->
-            <div class="content section-content tones-mode active" id="tonesToChordsSection">
-                <div class="fretboard-container">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                        <div style="display: flex; align-items: center; gap: 0.5rem;">
-                            <button id="btnTransposeDownInline" class="btn-transpose-inline" title="Transpose down one semitone" style="display: none;">
-                                <i data-lucide="chevron-left"></i>
-                            </button>
-                            <h2 id="currentChord" style="margin: 0;">Click frets to place notes</h2>
-                            <button id="btnTransposeUpInline" class="btn-transpose-inline" title="Transpose up one semitone" style="display: none;">
-                                <i data-lucide="chevron-right"></i>
-                            </button>
-                        </div>
-                        <button id="clearFretboard" class="btn-clear" title="Clear all notes from fretboard">
-                            <i data-lucide="x"></i>
-                            <span>Clear Fretboard</span>
-                        </button>
-                    </div>
-                    <div id="fretboard" class="fretboard">
-                        <!-- Dynamic fretboard -->
-                    </div>
-                    <div class="chord-info">
-                        <div id="chordNotes"></div>
-                        <div id="chordIntervals"></div>
-                    </div>
-                    <div class="fretboard-controls" id="fretboardControls" style="display: none;">
-                        <button id="btnTransposeDown" class="control-btn-small" title="Transpose down one semitone">
-                            <i data-lucide="minus"></i>
-                            <span>Lower</span>
-                        </button>
-                        <button id="btnTransposeUp" class="control-btn-small" title="Transpose up one semitone">
-                            <i data-lucide="plus"></i>
-                            <span>Higher</span>
-                        </button>
-                        <button id="btnToggleDisplay" class="control-btn-small" title="Toggle between notes and intervals">
-                            <i data-lucide="music"></i>
-                            <span>Notes</span>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="chord-library">
-                    <h3>Matching Chords</h3>
-                    <div id="chordGrid" class="chord-grid">
-                        <!-- Dynamic chord grid -->
-                    </div>
-                </div>
-            </div>
-
-            <!-- CHORD LIBRARY CONTENT -->
-            <div class="content section-content library-mode" id="chordLibrarySection" style="display: none;">
-                <div class="library-fretboard-view">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                        <h2 id="selectedChordDisplay" style="margin: 0;">Select a chord to see all voicings</h2>
-                        <button id="clearLibraryChord" class="btn-clear" title="Clear selected chord" style="display: none;">
-                            <i data-lucide="x"></i>
-                            <span>Clear</span>
-                        </button>
-                    </div>
-                    <div id="selectedChordFretboard" class="fretboard">
-                        <!-- Main fretboard for selected chord -->
-                    </div>
-                    <div class="chord-info">
-                        <div id="selectedChordNotes"></div>
-                        <div id="selectedChordIntervals"></div>
-                    </div>
-                </div>
-
-                <div class="all-voicings-container">
-                    <h3>All Voicings</h3>
-                    <div id="allVoicingsGrid" class="all-voicings-grid">
-                        <!-- All voicings displayed as mini fretboards -->
-                    </div>
-                </div>
-
-                <div class="chord-library-grid">
-                    <h3>Chord Library</h3>
-                    <div id="libraryChordGrid" class="chord-grid">
-                        <!-- Dynamic chord grid -->
-                    </div>
+            <div class="chord-results" id="chordResults">
+                <h2>Matching Chords</h2>
+                <div class="chord-list" id="chordList">
+                    <p class="placeholder">Click on the fretboard to place notes</p>
                 </div>
             </div>
         </main>
     </div>
 
-    <!-- Core utilities (must load first) -->
+    <script src="https://unpkg.com/lucide@latest"></script>
     <script src="js/utils.js"></script>
-    <!-- Data and logic -->
     <script src="js/chord-dictionary.js"></script>
-    <script src="js/progressions.js"></script>
-    <script src="js/scales.js"></script>
-    <!-- UI components -->
-    <script src="js/fretboard.js"></script>
-    <script src="js/search.js"></script>
-    <script src="js/progressions-ui.js"></script>
-    <script src="js/custom-progression.js"></script>
-    <script src="js/scales-ui.js"></script>
-    <script src="js/navigation.js"></script>
-    <script src="js/chord-builder.js"></script>
     <script src="js/theme.js"></script>
-    <script src="js/custom-chords.js"></script>
-    <!-- Main application -->
-    <script src="js/main.js"></script>
+    <script src="js/app.js"></script>
     <script>
-        // Initialize icons after DOM is ready
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', () => lucide.createIcons());
-        } else {
+        // Initialize Lucide icons after DOM is ready
+        function initIcons() {
             lucide.createIcons();
+        }
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initIcons);
+        } else {
+            initIcons();
         }
     </script>
 </body>
 </html>
-
