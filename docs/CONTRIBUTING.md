@@ -6,10 +6,19 @@ Thank you for your interest in contributing to Guitar Chord Finder!
 
 ### Adding New Chord Voicings
 
-The chord dictionary is in `js/chord-dictionary.js`. To add a new voicing:
+Chord voicings are managed through the guitar-engine dictionary generator. To add new voicings:
 
-1. Find the chord entry (e.g., `'C': { type: 'major', ... }`)
-2. Add a new position to the `positions` array:
+**Option 1: Using the dictionary generator (recommended)**
+
+1. Add new shape templates to the appropriate file in `guitar-engine/shapes/`
+2. Run `node guitar-engine/generate-dictionary.js` to regenerate the dictionary
+3. Copy the generated dictionary to `js/chord-dictionary.js`
+
+**Option 2: Manual addition (for quick tests)**
+
+1. Open `js/chord-dictionary.js`
+2. Find the chord entry (e.g., `'C': { type: 'major', ... }`)
+3. Add a new position to the `positions` array:
 
 ```javascript
 { frets: [fret6, fret5, fret4, fret3, fret2, fret1], root: rootString }
@@ -22,10 +31,11 @@ Where:
 
 ### Improving Chord Matching
 
-The chord matching algorithm is in `js/fretboard.js`. The current logic:
+The chord matching algorithm is in `js/app.js`. The current logic:
 - Checks if all chord notes are present
-- Could be enhanced to handle inversions
-- Could detect partial matches
+- Progressively filters chords as notes are added
+- Supports exact and partial matches
+- Could be enhanced to handle inversions and better partial matching
 
 ### Styling Improvements
 

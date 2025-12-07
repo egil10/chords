@@ -1,32 +1,60 @@
 // Theme toggle functionality
 function initTheme() {
-    const themeToggle = document.getElementById('themeToggle');
     const savedTheme = localStorage.getItem('theme') || 'light';
     
     // Apply saved theme
     document.documentElement.setAttribute('data-theme', savedTheme);
-    updateThemeIcon(savedTheme);
+    updateThemeRadio(savedTheme);
     
-    // Toggle theme on button click
-    if (themeToggle) {
-        themeToggle.addEventListener('click', () => {
-            const currentTheme = document.documentElement.getAttribute('data-theme');
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            document.documentElement.setAttribute('data-theme', newTheme);
-            localStorage.setItem('theme', newTheme);
-            updateThemeIcon(newTheme);
+    // Handle radio button changes
+    const lightRadio = document.getElementById('theme-light');
+    const darkRadio = document.getElementById('theme-dark');
+    
+    if (lightRadio) {
+        lightRadio.addEventListener('change', (e) => {
+            if (e.target.checked) {
+                setTheme('light');
+            }
+        });
+    }
+    
+    if (darkRadio) {
+        darkRadio.addEventListener('change', (e) => {
+            if (e.target.checked) {
+                setTheme('dark');
+            }
         });
     }
 }
 
-function updateThemeIcon(theme) {
-    const toggleBtn = document.getElementById('themeToggle');
-    if (toggleBtn) {
-        toggleBtn.setAttribute('aria-checked', theme === 'dark' ? 'true' : 'false');
-        toggleBtn.setAttribute('title', theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme');
-        // Icons are handled by CSS transitions, just re-init Lucide if needed
-        if (typeof lucide !== 'undefined') {
-            lucide.createIcons();
+function setTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
+    updateThemeRadio(theme);
+    
+    // Re-initialize Lucide icons if needed
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
+}
+
+function updateThemeRadio(theme) {
+    const lightRadio = document.getElementById('theme-light');
+    const darkRadio = document.getElementById('theme-dark');
+    const lightOption = lightRadio?.closest('.theme-option');
+    const darkOption = darkRadio?.closest('.theme-option');
+    
+    if (lightRadio && darkRadio) {
+        if (theme === 'light') {
+            lightRadio.checked = true;
+            darkRadio.checked = false;
+            lightOption?.classList.add('active');
+            darkOption?.classList.remove('active');
+        } else {
+            lightRadio.checked = false;
+            darkRadio.checked = true;
+            lightOption?.classList.remove('active');
+            darkOption?.classList.add('active');
         }
     }
 }
